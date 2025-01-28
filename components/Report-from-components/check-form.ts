@@ -1,8 +1,8 @@
 "use client";
-
 interface DataProps {
   data: {
     message: string | null;
+    status: string | null; 
   };
 
 }
@@ -13,6 +13,7 @@ interface CheckFormProps {
 }
 
 const CheckForm = ({ data, showAlert }: CheckFormProps) => {
+  console.log("dataCheckForm", data)
   let isAllNotNull = true;
   const textout: string[] = [];
 

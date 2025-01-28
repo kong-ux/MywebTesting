@@ -9,12 +9,12 @@ import { DataTableColumnHeader } from "./data-table-column-header";
 
 export const columns: ColumnDef<Expense>[] = [
   {
-    accessorKey: "Book_ID",
+    accessorKey: "FK_BookID",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="รหัสส่งหนังสือ" />
     ),
     cell: ({ row }) => (
-      <div className="">{row.getValue("Book_ID")}</div>
+      <div className="">{row.getValue("FK_BookID")}</div>
     ),
 
 

@@ -1,42 +1,73 @@
 import { NextResponse } from 'next/server';
-
+import { getConnection } from "@/lib/db";
 const API_url = "https://library.psru.ac.th/portal/book_api/";
 const Header_token = "271724c92d334b54f4388164c216a03c";
 
 export async function POST(request: Request) {
-  const { Input_data_Array } = await request.json();  // รับข้อมูลจาก body ของ request
+  const connection = await getConnection();
 
-  const result: Array<{ itemId: string, data: object | null, error?: string, status: number }> = [];
+  try {
+    const { Input_data_Array } = await request.json();
 
-  for (let i = 0; i < Input_data_Array.length; i++) {
-    const itemId = Input_data_Array[i];
-    const url = `${API_url}item/${itemId}`;
+    if (!Array.isArray(Input_data_Array) || Input_data_Array.some(id => typeof id !== 'string')) {
+      return NextResponse.json({ error: "Invalid input data" }, { status: 400 });
+    }
 
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "token": Header_token,
-          "Content-Type": "application/json",
-        },
-      });
+    const checkstatebook = `SELECT BookID, Bookstate FROM Books WHERE BookQR = ?;`;
+    const inProgressItems: { itemId: string; message: string; status: 201 }[] = [];
 
-      const status = response.status; // ดึงสถานะการตอบกลับ
-
-      if (!response.ok) {
-        throw new Error(`Error fetching data for ${itemId}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      result.push({ itemId, data, status });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        result.push({ itemId, data: null, error: error.message, status: 500 });
-      } else {
-        result.push({ itemId, data: null, error: "Unknown error", status: 500 });
+    for (const itemId of Input_data_Array) {
+      try {
+        const [stateData] = await connection.query(checkstatebook, [itemId]);
+        if (stateData.length > 0 && stateData[0].Bookstate === 'อยู่ในละหว่างดำเนินการ') {
+          inProgressItems.push({
+            itemId,
+            message: `รหัสบาร์โค้ด ${itemId} อยู่ในละหว่างดำเนินการ`,
+            status: 201,
+          });
+        }
+      } catch (error) {
+        return NextResponse.json({
+          itemId,
+          data: null,
+          error: "Database query failed",
+          status: 500,
+        });
       }
     }
-  }
 
-  return NextResponse.json(result);  // ส่งกลับข้อมูลในรูปแบบ JSON
+    if (inProgressItems.length > 0) {
+      // Return all in-progress items
+      return NextResponse.json(inProgressItems, { status: 201 });
+    }
+
+    const promises = Input_data_Array.map(async (itemId) => {
+      try {
+        const response = await fetch(`${API_url}item/${itemId}`, {
+          method: "GET",
+          headers: {
+            "token": Header_token,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching data for ${itemId}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return { itemId, data, status: response.status };
+      } catch (error) {
+        return { itemId, data: null, error: error.message || "Unknown error", status: 500 };
+      }
+    });
+
+    const result = await Promise.all(promises);
+    return NextResponse.json(result, { status: 200 });
+  } finally {
+    connection.end();
+  }
 }
+
+
+

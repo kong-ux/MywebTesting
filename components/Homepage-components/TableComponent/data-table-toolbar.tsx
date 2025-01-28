@@ -27,6 +27,8 @@ export function DataTableToolbar<TData>({
     to: new Date(),
   });
 
+  const [dateColumn, setDateColumn] = useState("ServiceDate");
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -43,9 +45,12 @@ export function DataTableToolbar<TData>({
 
   const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
     setDateRange({ from, to });
-    table.getColumn("ServiceDate")?.setFilterValue([from, to]);
+    table.getColumn(dateColumn)?.setFilterValue([from, to]);
   };
 
+  const toggleDateColumn = () => {
+    setDateColumn((prev) => (prev === "ServiceDate" ? "StatusDate" : "ServiceDate"));
+  };
 
   return (
     <div className="flex flex-wrap items-center justify-between">
@@ -77,6 +82,7 @@ export function DataTableToolbar<TData>({
             column={table.getColumn("StatusName")}
             title="สถาณะ"
             options={status}
+            
           />
         )}
         {isFiltered && (
@@ -89,6 +95,12 @@ export function DataTableToolbar<TData>({
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
+        <Button
+          variant="outline"
+          onClick={toggleDateColumn}
+        >
+          เปลียนวัน: ({dateColumn === "ServiceDate" ? "StatusDate" : "ServiceDate"})
+        </Button>
         <CalendarDatePicker
           date={dateRange}
           onDateSelect={handleDateSelect}

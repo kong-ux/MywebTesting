@@ -1,62 +1,84 @@
-import { Pencil, Home, Table2, Settings } from "lucide-react";
-import Link from "next/link";
+"use client"
+
+import * as React from "react"
+import {
+  House,
+  PenLine,
+  BookMarked,
+  SquareLibrary,
+  ArrowUpNarrowWide,
+  Table2,
+} from "lucide-react"
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { NavMain } from "./nav-main"
+import { NavUser } from "./nav-user"
+
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+} from "@/components/ui/sidebar"
 
-// Menu items
-const items = [
-  {
-    title: "Home",
-    href: "/",
-    icon: Home,
-  },
-  {
-    title: "Table",
-    href: "/Table",
-    icon: Table2,
-  },
-  {
-    title: "Service",
-    href: "/Service-form",
-    icon: Pencil,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
-];
+// This is sample data.
+// user: {
+//   name: "shadcn",
+//   email: "m@example.com",
+//   avatar: "/avatars/shadcn.jpg",
+// }
+const Menu = {
+  navMain: [
+    {
+      title: "Home",
+      href: "/",
+      icon: House,
+    },
+    {
+      title: "Report",
+      href: "/Report-form",
+      icon: PenLine,
+    },
+    {
+      title: "Repair&Update",
+      href: "/Repair&Update",
+      icon: BookMarked,
+    },
+    {
+      title: "Release",
+      href: "/Release",
+      icon: ArrowUpNarrowWide,
+    },
+    {
+      title: "TABLE DATA",
+      href: "/TableData",
+      icon: Table2,
+    },
+  ]
+}
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+
   return (
-    <Sidebar>
-      <SidebarContent className="bg-card">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-2xl font-bold text-red-700 ">ARIR Menu</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.href} className="flex items-center space-x-2">
-                        <item.icon className="w-5 h-5" />
-                        <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+    <Sidebar className="" collapsible="icon" {...props}>
+      <SidebarHeader className="bg-primary">
+        <div className="flex items-center">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
+            <SquareLibrary className="size-7 text-white" />
+          </div>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-bold text-white text-2xl ">ู&nbsp;ARIT SERVICE</span>
+          </div>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain navMain={Menu.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        {/* <NavUser user={data.user} /> */}
+      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

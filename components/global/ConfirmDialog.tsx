@@ -1,8 +1,7 @@
 "use client"
-
-import React, { createContext, useState, ReactNode } from "react";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -10,51 +9,58 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import React, { createContext, useState, ReactNode } from "react";
 
 interface AlertContextProps {
-  showAlert: (title: string, description: string, cancelText?: string, callback?: () => void) => void;
+  showAlert: (title: string, description: string, confirmText?: string, callback?: () => void) => void;
 }
 
-const AlertContext = createContext<AlertContextProps | undefined>(undefined);
+const ConfrimContext = createContext<AlertContextProps | undefined>(undefined);
 
-export const AlertProvider = ({ children }: { children: ReactNode }) => {
+export function ConfirmDialog({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState("");
   const [alertDescription, setAlertDescription] = useState("");
-  const [alertCancelText, setAlertCancelText] = useState("OK");
+  const [alertConfirmText, setAlertConfirmText] = useState("OK");
   const [callback, setCallback] = useState<(() => void) | undefined>(undefined);
 
-  const showAlert = (title: string, description: string, cancelText = "OK", callback?: () => void) => {
+  const showAlert = (title: string, description: string, confirmText = "OK", callback?: () => void) => {
     setAlertTitle(title);
     setAlertDescription(description);
-    setAlertCancelText(cancelText);
+    setAlertConfirmText(confirmText);
     setCallback(() => callback);
     setIsOpen(true);
   };
 
-  const closeAlert = () => {
+  const confirmsubmit = () => {
     setIsOpen(false);
     if (callback) {
       callback();
     }
   };
 
+  const close = () => {
+    setIsOpen(false);
+  }
   return (
-    <AlertContext.Provider value={{ showAlert }}>
+    <ConfrimContext.Provider value={{ showAlert }}>
       {children}
-      <AlertDialog open={isOpen} onOpenChange={closeAlert}>
+      <AlertDialog open={isOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{alertTitle}</AlertDialogTitle>
             <AlertDialogDescription>{alertDescription}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{alertCancelText}</AlertDialogCancel>
+            <AlertDialogCancel onClick={close}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmsubmit}>{alertConfirmText}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </AlertContext.Provider>
+    </ConfrimContext.Provider>
   );
-};
+}
 
-export default AlertContext;
+export default ConfrimContext;
+

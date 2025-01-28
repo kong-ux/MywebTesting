@@ -6,11 +6,11 @@ import CheckForm from "./check-form";
 import { useAlert } from "@/hooks/use-alert";
 
 interface ServiceFormProps {
-  OutputData: (data: FunctionStringCallback) => void; // Callback function เพื่อส่ง data กลับไป
+  OutputData: (data: unknown) => void; // Callback function to send data back
 }
 
 export function ServiceForm({ OutputData }: ServiceFormProps) {
-  const { showAlert } = useAlert(); // ใช้ hook ที่นี่
+  const { showAlert } = useAlert(); // Custom hook for alerts
   const [inputs, setInputs] = useState<string[]>([""]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -18,22 +18,28 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
     const newInputs = [...inputs];
     newInputs[index] = value;
 
+    // Automatically add or remove input fields
     if (value && index === inputs.length - 1) {
-      newInputs.push(""); // เพิ่มช่องกรอกใหม่
-    }
-
-    if (newInputs[newInputs.length - 2] === "" && newInputs.length > 1) {
-      newInputs.pop(); // ลบช่องกรอกสุดท้าย
+      newInputs.push(""); // Add a new input field
+    } else if (newInputs[newInputs.length - 2] === "" && newInputs.length > 1) {
+      newInputs.pop(); // Remove the last input field
     }
 
     setInputs(newInputs);
   };
 
-  const submit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-
+  
     const filteredInputs = inputs.filter((input) => input.trim() !== "");
+
+    const uniqueInputs = new Set(filteredInputs);
+    if (uniqueInputs.size !== filteredInputs.length) {
+      showAlert("ไม่สามารถดำเนินการ", "พบข้อมูลซ้ำกัน", "OK");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get_books`, {
@@ -43,22 +49,25 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
         },
         body: JSON.stringify({ Input_data_Array: filteredInputs }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
+  
       const rowResult = await response.json();
-      console.log("rowResult", rowResult);
-      const checkedData = CheckForm({ data: rowResult, showAlert }); 
-
-      console.log("checkedData", checkedData);
-
-      if (checkedData !== null) {
-        OutputData(checkedData); // ส่งข้อมูลไปยัง OutputData
+  
+      if (response.status === 201) {
+        const messages = rowResult.map((item: any, index: number) => `มี ${item.message}`);
+        showAlert("ไม่สามารถดำเนินการ", messages.join("\n"), "OK");
+      } else if (response.status === 200) {
+        console.log("response 200");
+        const checkedData = CheckForm({ data: rowResult, showAlert });
+        if (checkedData) {
+          OutputData(checkedData);
+        }
+      } else {
+        throw new Error("Unexpected API response");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      showAlert("Error", errorMessage, "OK");
     } finally {
       setLoading(false);
     }
@@ -66,7 +75,7 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
 
   return (
     <div className="w-full max-w-sm space-y-2">
-      <form onSubmit={submit} className="felx flex-col space-y-3">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
         {inputs.map((input, index) => (
           <div key={index}>
             <Input
@@ -78,7 +87,7 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
           </div>
         ))}
         <Button type="submit" disabled={loading}>
-          {loading ? 'กำลังสร้าง...' : 'สร้าง'}
+          {loading ? "กำลังสร้าง..." : "สร้าง"}
         </Button>
       </form>
     </div>

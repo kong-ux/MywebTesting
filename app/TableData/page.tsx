@@ -11,7 +11,7 @@ const fetcher = async (url) => {
   return res.json();
 };
 
-export default function Home() {
+export default function page() {
   const { data, error, isLoading } = useSWR(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/getdata`,
     fetcher,

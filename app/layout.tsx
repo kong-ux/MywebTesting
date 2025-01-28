@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -6,6 +5,9 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { Navbar } from "@/components/Navbar/NavBar";
 import { AlertProvider } from "@/components/global/AlertDialog";
+import { ConfirmDialog } from "@/components/global/ConfirmDialog";
+import { Toaster } from "@/components/ui/toaster"
+
 
 
 export const metadata: Metadata = {
@@ -20,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="bg-background">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -28,14 +30,17 @@ export default function RootLayout({
           disableTransitionOnChange
           >
         <AlertProvider>
+        <ConfirmDialog>
           <SidebarProvider>
             <AppSidebar />
-              <main className="flex flex-col w-full">
-                <Navbar />
-                <div className="mx-auto mx-8 w-full h-full">{children}</div>
+              <main className="relative w-screen flex static">
+                <Navbar/>
+                <div className="absolute w-full top-8">{children}</div>
               </main>
           </SidebarProvider>
+          </ConfirmDialog>
         </AlertProvider>
+        <Toaster />
         </ThemeProvider>
       </body>
     </html>
