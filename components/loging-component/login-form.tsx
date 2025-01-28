@@ -11,7 +11,7 @@ export default function Formlogin() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const submitLogin = async (event) => {
+  const submitLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setErrorMessage("");

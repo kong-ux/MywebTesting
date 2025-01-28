@@ -1,5 +1,5 @@
 import { ModeToggle } from "./themes-toggle";
-import { ButtonLogOut } from "./Login-outButton";
+import { ButtonState } from "./Login-outButton";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export const Navbar = () => {
@@ -12,7 +12,8 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <ButtonLogOut />
+
+          <ButtonState />
           <ModeToggle />
         </div>
       </nav>

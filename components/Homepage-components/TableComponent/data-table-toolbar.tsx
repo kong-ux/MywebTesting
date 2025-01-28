@@ -2,16 +2,13 @@
 
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { status_book, type_books } from "./data";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { CalendarDatePicker } from "@/components/calendar-date-picker";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTableViewOptions } from "./data-table-view-options";
-import { CircleFadingArrowUp } from "lucide-react";
-
+import fetchTypeBooks_AddressBook from "./data";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -20,52 +17,66 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
-  
+  const [typeBooks, setTypeBooks] = useState([]);
+  const [addressBooks, setAddressBooks] = useState([]);
+  const [status, setStatus] = useState([]);
   const isFiltered = table.getState().columnFilters.length > 0;
 
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: new Date(new Date().getFullYear(), 0, 1),
     to: new Date(),
   });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const { type_books, address_book ,status } = await fetchTypeBooks_AddressBook();
+        setTypeBooks(type_books);
+        setAddressBooks(address_book);
+        setStatus(status);
+      } catch (error) {
+        console.error("Error fetching dropdown data:", error);
+      }
+    }
+    fetchData();
+  }, []);
+
   const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
     setDateRange({ from, to });
-    // Filter table data based on selected date range
-    table.getColumn("StatusDate")?.setFilterValue([from, to]);
+    table.getColumn("ServiceDate")?.setFilterValue([from, to]);
   };
 
-  const handleClick = () => {
-    const selectedRows = table.getFilteredSelectedRowModel().flatRows.map(row => row.original);
-    console.log(selectedRows);
-
-    sessionStorage.setItem("selectedRows", JSON.stringify(selectedRows));
-
-    // นำทางไปยังหน้า Update-service
-    window.location.href = "/Table/Update-service"; // หรือใช้ window.location.assign("/Update-service")
-  };
 
   return (
     <div className="flex flex-wrap items-center justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <Input
-          placeholder="Filter labels..."
-          value={(table.getColumn("Book_Name")?.getFilterValue() as string) ?? ""}
+          placeholder="ค้นหาชื่อหนังสือ...."
+          value={(table.getColumn("Bookname")?.getFilterValue() as string) ?? ""}
           onChange={(event) => {
-            table.getColumn("Book_Name")?.setFilterValue(event.target.value);
+            table.getColumn("Bookname")?.setFilterValue(event.target.value);
           }}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("Typ_Book") && (
+        {table.getColumn("BookType") && (
           <DataTableFacetedFilter
-            column={table.getColumn("Typ_Book")}
+            column={table.getColumn("BookType")}
             title="ชนิดหนังสือ"
-            options={type_books}
+            options={typeBooks}
           />
         )}
-        {table.getColumn("Status_Name") && (
+        {table.getColumn("Bookaddress") && (
           <DataTableFacetedFilter
-            column={table.getColumn("Status_Name")}
-            title="สถาณ"
-            options={status_book}
+            column={table.getColumn("Bookaddress")}
+            title="สถาณที่"
+            options={addressBooks}
+          />
+        )}
+          {table.getColumn("StatusName") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("StatusName")}
+            title="สถาณะ"
+            options={status}
           />
         )}
         {isFiltered && (
@@ -81,23 +92,12 @@ export function DataTableToolbar<TData>({
         <CalendarDatePicker
           date={dateRange}
           onDateSelect={handleDateSelect}
-          className="h-9 w-[250px]"
+          className="h-9 w-[]"
           variant="outline"
         />
       </div>
 
       <div className="flex items-center gap-2">
-        {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleClick} 
-          >
-            <CircleFadingArrowUp className="mr-2 size-4" aria-hidden="true" />
-            อัพเดทสถาณะ ({table.getFilteredSelectedRowModel().rows.length})
-          </Button>
-        ) : null}
         <DataTableViewOptions table={table} />
       </div>
     </div>

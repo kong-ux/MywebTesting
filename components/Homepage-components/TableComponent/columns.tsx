@@ -3,37 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Expense } from "./schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
-import { Checkbox } from "@/components/ui/checkbox";
 
 
 
 
 export const columns: ColumnDef<Expense>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-0.5"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-0.5"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "Book_ID",
     header: ({ column }) => (
@@ -64,6 +38,15 @@ export const columns: ColumnDef<Expense>[] = [
     ),
   },
   {
+    accessorKey: "Bookaddress",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="สถาณที่" />
+    ),  
+    cell: ({ row }) => (
+      <div className="">{row.getValue("Bookaddress")}</div>
+    ),
+  },
+  {
     accessorKey: "Service",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="บริการ" />
@@ -85,7 +68,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="วันที่บริการ" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.getValue("Date_service"));
+      const date = new Date(row.getValue("ServiceDate"));
       const formattedDate = date.toLocaleDateString("en-US", {
         day: "2-digit",
         month: "short",
@@ -141,9 +124,5 @@ export const columns: ColumnDef<Expense>[] = [
       const [startDate, endDate] = value;
       return rowDate >= startDate && rowDate <= endDate;
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

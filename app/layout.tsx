@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { Navbar } from "@/components/Navbar/NavBar";
-
+import { AlertProvider } from "@/components/global/AlertDialog";
 
 
 export const metadata: Metadata = {
@@ -21,19 +21,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-              <ThemeProvider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
           >
-        <SidebarProvider>
-        <AppSidebar />
-        <main className="flex flex-col w-full">
-              <Navbar />
-              <div className="mx-auto mx-8 w-full h-full">{children}</div>
-            </main>
-      </SidebarProvider>
+        <AlertProvider>
+          <SidebarProvider>
+            <AppSidebar />
+              <main className="flex flex-col w-full">
+                <Navbar />
+                <div className="mx-auto mx-8 w-full h-full">{children}</div>
+              </main>
+          </SidebarProvider>
+        </AlertProvider>
         </ThemeProvider>
       </body>
     </html>
