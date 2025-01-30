@@ -3,11 +3,66 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Expense } from "./schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
-
+import { DataTableRowActions } from "./data-table-row-actions";
+import { Checkbox } from "@/components/ui/checkbox";
 
 
 
 export const columns: ColumnDef<Expense>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="translate-y-0.5"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-0.5"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "Repair_ID",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="รหัสรายการซ่อม" />
+    ),
+    cell: ({ row }) => (
+      <div className="">{row.getValue("Repair_ID")}</div>
+    ),
+
+  },
+  {
+    accessorKey: "Username",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ผู้ทำราการ" />
+    ),
+    cell: ({ row }) => (
+      <div className="">{row.getValue("Username")}</div>
+    ),
+
+  },
+  {
+    accessorKey: "BookQR",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="รหัสบาร์โค้ด" />
+    ),
+    cell: ({ row }) => (
+      <div className="">{row.getValue("BookQR")}</div>
+    ),
+
+  },
   {
     accessorKey: "FK_BookID",
     header: ({ column }) => (
@@ -16,7 +71,6 @@ export const columns: ColumnDef<Expense>[] = [
     cell: ({ row }) => (
       <div className="">{row.getValue("FK_BookID")}</div>
     ),
-
 
   },
   {
@@ -47,6 +101,22 @@ export const columns: ColumnDef<Expense>[] = [
     ),
   },
   {
+    accessorKey: "Bookstate",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="สถาณะหนังสือ" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center">
+          <span className="capitalize"> {row.getValue("Bookstate")}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
     accessorKey: "Service",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="บริการ" />
@@ -58,6 +128,40 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "ServiceNote",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="บริการเพิ่มเติม" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center">
+          <span className="capitalize"> {row.getValue("ServiceNote")}</span>
+        </div>
+      );
+    },
+    
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "ServiceByName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ชื่อผู้แจ้ง" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center">
+          <span className="capitalize"> {row.getValue("ServiceByName")}</span>
+        </div>
+      );
+    },
+    
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
@@ -124,5 +228,9 @@ export const columns: ColumnDef<Expense>[] = [
       const [startDate, endDate] = value;
       return rowDate >= startDate && rowDate <= endDate;
     },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

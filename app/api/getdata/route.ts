@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
-
-import { getConnection } from '@/lib/db';
+import { NextResponse } from "next/server";
+import { getConnection } from "@/lib/db";
 
 let cache = null; // ตัวแปรสำหรับเก็บ cache
 let cacheTimestamp = null; // เก็บเวลาที่ข้อมูลถูกเก็บ
@@ -21,7 +20,7 @@ export async function GET() {
     const rows = await connection.query(`
       SELECT
           RD.Repair_ID,
-          RD.FK_User_ID,
+          U.Username,
           RD.FK_BookID,
           B.BookQR,
           B.Bookname,
@@ -44,6 +43,8 @@ export async function GET() {
           Status S ON RD.Repair_ID = S.FK_RepairID
       JOIN 
           StatusType ST ON S.FK_StatusID = ST.StatusID
+      JOIN 
+          USER U ON U.ID_User = RD.FK_User_ID
       WHERE 
           SV.ServiceDate = (SELECT MAX(ServiceDate) FROM Service WHERE FK_RepairID = RD.Repair_ID)
           AND S.StatusDate = (SELECT MAX(StatusDate) FROM Status WHERE FK_RepairID = RD.Repair_ID);
@@ -55,7 +56,16 @@ export async function GET() {
     return NextResponse.json(rows[0]);
   } catch (error) {
     console.error("Database error:", error);
-    return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });
-  }
 
+    // หากมี cache เก่าและยังไม่หมดอายุ ให้ส่งข้อมูลจาก cache แทน
+    if (cache && currentTime - cacheTimestamp < CACHE_DURATION) {
+      console.log("Database error, serving from cache");
+      return NextResponse.json(cache);
+    }
+
+    return NextResponse.json(
+      { error: "Failed to fetch data" },
+      { status: 500 }
+    );
+  }
 }

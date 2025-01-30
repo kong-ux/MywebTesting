@@ -1,8 +1,9 @@
 'use client';
 
 import useSWR from 'swr';
-import { DataTable } from '@/components/Homepage-components/TableComponent/data-table';
-import { columns } from '@/components/Homepage-components/TableComponent/columns';
+
+import { DataTable } from '@/components/TableData-components/Table-data/data-table';
+import { columns } from '@/components/TableData-components/Table-data/columns';
 import { Progress } from '@/components/ui/progress';
 
 const fetcher = async (url) => {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/session'
 import { cookies } from 'next/headers'
 
-const protectedRoutes = ['/Release', '/Repair&Update', '/Report-form'] 
+const protectedRoutes = ['/Release', '/Repair&Update', '/Report-form', '/TableData', '/Dashboard'] 
 const publicRoutes = ['/']
 
 export default async function middleware(req: NextRequest) {
@@ -20,14 +20,11 @@ export default async function middleware(req: NextRequest) {
       console.error("Failed to verify session", error)
     }
   }
-  console.log(session?.ID_User)
-
   if (isProtectedRoute && !session?.ID_User) {
     const url = new URL('/', req.nextUrl)
     url.searchParams.set('user', 'login')
     return NextResponse.redirect(url)
   }
-
   if (
     isPublicRoute &&
     session?.userId &&

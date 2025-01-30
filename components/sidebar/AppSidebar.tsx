@@ -8,6 +8,7 @@ import {
   SquareLibrary,
   ArrowUpNarrowWide,
   Table2,
+  SquareKanban,
 } from "lucide-react"
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main"
@@ -53,6 +54,11 @@ const Menu = {
       title: "TABLE DATA",
       href: "/TableData",
       icon: Table2,
+    },
+    {
+      title: "DASHBOARD",
+      href: "/Dashboard",
+      icon: SquareKanban,
     },
   ]
 }

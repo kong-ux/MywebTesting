@@ -33,9 +33,9 @@ export default function RootLayout({
         <ConfirmDialog>
           <SidebarProvider>
             <AppSidebar />
-              <main className="relative w-screen flex static">
+              <main className="relative w-screen flex flex-col">
                 <Navbar/>
-                <div className="absolute w-full top-8">{children}</div>
+                <div className="flex-grow">{children}</div>
               </main>
           </SidebarProvider>
           </ConfirmDialog>
