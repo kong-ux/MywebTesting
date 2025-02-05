@@ -10,9 +10,9 @@ import {
   Table2,
   SquareKanban,
 } from "lucide-react"
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main"
-import { NavUser } from "./nav-user"
+
 
 import {
   Sidebar,
@@ -22,12 +22,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
-// user: {
-//   name: "shadcn",
-//   email: "m@example.com",
-//   avatar: "/avatars/shadcn.jpg",
-// }
+
 const Menu = {
   navMain: [
     {
@@ -69,8 +64,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar className="" collapsible="icon" {...props}>
       <SidebarHeader className="bg-primary">
-        <div className="flex items-center">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
+        <div onClick={useSidebar().toggleSidebar} className="flex items-center">
+          <div  className="flex aspect-square size-8 items-center justify-center rounded-lg ">
             <SquareLibrary className="size-7 text-white" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">

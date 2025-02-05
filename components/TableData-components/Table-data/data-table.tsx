@@ -50,6 +50,18 @@ export function DataTable<TData, TValue>({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
+    if (!filterValue) return true;
+    const search = filterValue.toLowerCase();
+  
+    return (
+      row.original.Bookname?.toLowerCase().includes(search) ||
+      row.original.BookQR?.toLowerCase().includes(search) ||
+      row.original.FK_BookID?.toString().includes(search)
+    );
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -58,6 +70,7 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -70,11 +83,13 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn
   });
 
   return (
     <div className="space-y-4 m-8 m-auto">
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} setGlobalFilter={setGlobalFilter} />
       <div className="overflow-y-auto rounded-md border">
       <DataTablePagination table={table} />
         <Table>

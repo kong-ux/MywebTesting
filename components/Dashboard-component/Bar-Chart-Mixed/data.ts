@@ -53,10 +53,12 @@ export default async function dataCardBarChart(from: Date, to: Date) {
     }, {});
 
     // แปลงเป็นรูปแบบที่กราฟต้องการ
-    const DataService = Object.entries(serviceCounts).map(([state, num]) => ({
-      state,
-      num,
-    }));
+    const DataService = Object.entries(serviceCounts)
+      .filter(([state]) => state !== "รับเรื่องแจ้งแล้ว")
+      .map(([state, num]) => ({
+        state,
+        num,
+      }));
 
     const DataFK_BookID = Object.entries(FK_BookIDCounts).map(([state, num]) => ({
       state,

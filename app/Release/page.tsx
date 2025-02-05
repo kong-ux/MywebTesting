@@ -26,7 +26,7 @@ const checkboxsubmit = (data, checkedItems, setIsuploading, showAlert) => {
       BookQR: item.BookQR,
     }));
   console.log(checkedData);
-  showAlert("Confirm", "Are you sure you want to upload the data?", "Yes", () => {
+  showAlert("คืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
     uploadData(checkedData, setIsuploading);
   });
 };
@@ -72,7 +72,7 @@ const Page = () => {
     const item = data.find((item) => item.Repair_ID === id);
     if (item) {
       console.log([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }]);
-      showAlert("Confirm", "Are you sure you want to upload the data?", "Yes", () => {
+      showAlert("คืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
         uploadData([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }], setIsuploading);
       });
     }
@@ -85,7 +85,7 @@ const Page = () => {
         if (checkedItems[item.Repair_ID]) {
           toast({
             description: `เพิ่ม ${item.BookQR} ไปแล้ว`,
-            className: "text-red-500",
+            variant: "destructive",
           });
         } else if (!checkedItems[item.Repair_ID]) {
           handleCheckboxChange(item.Repair_ID);
@@ -97,8 +97,9 @@ const Page = () => {
         setSearchQuery("");
       } else {
         toast({
+          variant: "destructive",
           description: `ไม่พบรหัสดังกล่าว`,
-          className: "text-red-500",
+      
         });
       }
     }

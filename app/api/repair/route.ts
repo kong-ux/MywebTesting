@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
 
-export async function POST(request: Request) {
+export async function POST(request) {
   const connection = await getConnection();
 
   try {
     const { inputDataArray } = await request.json();
 
-    // Validate input
+    // ตรวจสอบข้อมูลที่รับเข้ามา
     if (
       !Array.isArray(inputDataArray) ||
       inputDataArray.some((id) => typeof id !== "string")
@@ -18,7 +18,40 @@ export async function POST(request: Request) {
       );
     }
 
+    // ใช้ `IN (?)` เพื่อดึงข้อมูลทั้งหมดใน Query เดียว
+    const placeholders = inputDataArray.map(() => "?").join(",");
     const query = `
+WITH LatestService AS (
+  SELECT FK_RepairID, MAX(ServiceDate) AS MaxServiceDate
+  FROM Service
+  GROUP BY FK_RepairID
+),
+LatestStatus AS (
+  SELECT FK_RepairID, MAX(StatusDate) AS MaxStatusDate
+  FROM Status
+  GROUP BY FK_RepairID
+),
+LatestRepair AS (
+  SELECT RD1.FK_BookID, RD1.Repair_ID
+  FROM RepairDocs RD1
+  LEFT JOIN Service SV1 ON SV1.FK_RepairID = RD1.Repair_ID
+  LEFT JOIN Status S1 ON S1.FK_RepairID = RD1.Repair_ID
+  WHERE RD1.FK_BookID IS NOT NULL
+  GROUP BY RD1.FK_BookID, RD1.Repair_ID
+  HAVING GREATEST(
+    COALESCE(MAX(SV1.ServiceDate), '1900-01-01'), 
+    COALESCE(MAX(S1.StatusDate), '1900-01-01')
+  ) = (
+    SELECT MAX(GREATEST(
+      COALESCE(SV2.ServiceDate, '1900-01-01'), 
+      COALESCE(S2.StatusDate, '1900-01-01')
+    ))
+    FROM RepairDocs RD2
+    LEFT JOIN Service SV2 ON SV2.FK_RepairID = RD2.Repair_ID
+    LEFT JOIN Status S2 ON S2.FK_RepairID = RD2.Repair_ID
+    WHERE RD2.FK_BookID = RD1.FK_BookID
+  )
+)
 SELECT  
   RD.Repair_ID, 
   RD.FK_User_ID, 
@@ -35,87 +68,68 @@ SELECT
   SV.ServiceDate, 
   ST.StatusName, 
   S.StatusDate 
-FROM
-  Books B
-JOIN
-  RepairDocs RD ON B.BookID = RD.FK_BookID
-LEFT JOIN
-  Service SV ON RD.Repair_ID = SV.FK_RepairID AND SV.ServiceDate = (
-    SELECT MAX(SV1.ServiceDate)
-    FROM Service SV1
-    WHERE SV1.FK_RepairID = RD.Repair_ID
-  )
-LEFT JOIN
-  Status S ON RD.Repair_ID = S.FK_RepairID AND S.StatusDate = (
-    SELECT MAX(S1.StatusDate)
-    FROM Status S1
-    WHERE S1.FK_RepairID = RD.Repair_ID
-  )
-LEFT JOIN
-  StatusType ST ON S.FK_StatusID = ST.StatusID
+FROM Books B
+JOIN RepairDocs RD ON B.BookID = RD.FK_BookID
+JOIN LatestRepair LR ON RD.Repair_ID = LR.Repair_ID
+LEFT JOIN Service SV ON RD.Repair_ID = SV.FK_RepairID
+  AND SV.ServiceDate = (SELECT MaxServiceDate FROM LatestService WHERE FK_RepairID = RD.Repair_ID)
+LEFT JOIN Status S ON RD.Repair_ID = S.FK_RepairID
+  AND S.StatusDate = (SELECT MaxStatusDate FROM LatestStatus WHERE FK_RepairID = RD.Repair_ID)
+LEFT JOIN StatusType ST ON S.FK_StatusID = ST.StatusID
 WHERE 
-  RD.Repair_ID = (
-    SELECT RD1.Repair_ID
-    FROM RepairDocs RD1
-    WHERE RD1.FK_BookID = B.BookID
-    ORDER BY (
-      SELECT MAX(GREATEST(
-        COALESCE(SV1.ServiceDate, '1900-01-01'), 
-        COALESCE(S1.StatusDate, '1900-01-01')
-      ))
-      FROM Service SV1
-      LEFT JOIN Status S1 ON SV1.FK_RepairID = S1.FK_RepairID
-      WHERE SV1.FK_RepairID = RD1.Repair_ID
-    ) DESC
-    LIMIT 1
-  )
-  AND B.Bookstate = 'อยู่ในละหว่างดำเนินการ'
-  AND B.BookQR = ?;
+  B.Bookstate = 'อยู่ในละหว่างดำเนินการ'
+  AND B.BookQR IN (${placeholders});
+`;
 
-    `;
+    // ดึงข้อมูลทั้งหมดใน Query เดียว
+    const [queryResults] = await connection.query(query, inputDataArray);
 
-    const invalidItems = [];
+    // แปลงผลลัพธ์เป็น Map เพื่อค้นหาได้เร็วขึ้น
+    const resultMap = new Map(
+      queryResults.map((item) => [item.BookQR, item])
+    );
+
+    // จัดกลุ่มข้อมูลเป็น valid และ invalid items
     const validItems = [];
+    const invalidItems = [];
 
-    // Loop through input data
     for (const itemId of inputDataArray) {
-      try {
-        const [queryResult] = await connection.query(query, [itemId]);
-
-        if (queryResult.length === 0) {
-          invalidItems.push({
-            itemId,
-            message: `รหัสบาร์โค้ด ${itemId} ไม่ได้อยู่ในละหว่างดำเนินการหรือรหัสไม่ถูกต้อง`,
-          });
-        } else {
-          validItems.push({
-            itemId,
-            data: queryResult,
-          });
-        }
-      } catch (error) {
-        return NextResponse.json({
-          error: "Database query failed",
-          details: error.message,
-          status: 500,
+      if (resultMap.has(itemId)) {
+        validItems.push({
+          itemId,
+          data: resultMap.get(itemId),
+        });
+      } else {
+        invalidItems.push({
+          itemId,
+          message: `รหัสบาร์โค้ด ${itemId} ไม่ได้อยู่ในละหว่างดำเนินการหรือรหัสไม่ถูกต้อง`,
         });
       }
     }
 
-    // If there are invalid items, return them with a 404 status
+    // ถ้ามี invalid items ให้ return 404
     if (invalidItems.length > 0) {
-      return NextResponse.json({
-        itemId: invalidItems.map((item) => item.itemId),
-        message: invalidItems.map((item) => item.message),
-        status: 404,
-      });
+      return NextResponse.json(
+        {
+          itemId: invalidItems.map((item) => item.itemId),
+          message: invalidItems.map((item) => item.message),
+          status: 404,
+        }
+      );
     }
 
-    // If all items are valid, return success
+    // Return ข้อมูลที่สำเร็จ
     return NextResponse.json({
       message: "All items processed successfully",
       data: validItems,
       status: 200,
+    });
+
+  } catch (error) {
+    return NextResponse.json({
+      error: "Database query failed",
+      details: error.message,
+      status: 500,
     });
   } finally {
     connection.end();

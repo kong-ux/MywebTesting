@@ -4,8 +4,7 @@ import { ServiceForm } from "@/components/Repair&Upadate-components/form-compone
 import CreateFormService from "@/components/Repair&Upadate-components/Insert_Form_Service";
 // import { ServiceForm } from "@/components/Report-from-components/form-components";
 // import CreateFormService from "@/components/Report-from-components/Insert_Form_Service";
-
-import { Button } from "@/components/ui/button";
+import SheetTriggerButton from "@/components/Repair&Upadate-components/SheetDoc";
 
 const Page = () => {
   const [formData, setFormData] = useState<any>(null);
@@ -15,11 +14,18 @@ const Page = () => {
     setFormData(data); // เก็บ data ที่ได้จาก ServiceForm
   };
 
+  // Log formData after it has been updated
+  console.log("FormData received:", formData);
+
   return (
     <div className="flex w-full h-screen ">
       <div className="p-6 w-2/4">
         <h1 className="mb-4 text-3xl font-extrabold">ทำรายการ</h1>
-        <p className="mb-6 text-lg font-normal">กรอกรหัส Barcode หนังสือ</p>
+        <div className="flex space-x-4">
+          <p className="mb-6 text-lg font-normal">กรอกรหัส Barcode หนังสือ</p>
+          <SheetTriggerButton />
+        </div>
+
         <ServiceForm OutputData={getdataform} />
       </div>
       <div className="w-full border-l border-gray-200 ">

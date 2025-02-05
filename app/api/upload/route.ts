@@ -34,6 +34,12 @@ export async function POST(req) {
     VALUES (?, ?, ?, ?, ?, 'อยู่ในละหว่างดำเนินการ');
     `;
 
+    const updateBooksQuery = `
+      UPDATE Books
+      SET BookQR = ?, Bookname = ?, Booktype = ?, Bookaddress = ?, Bookstate = 'อยู่ในละหว่างดำเนินการ'
+      WHERE BookID = ?;
+    `;
+
     const insertRepairDocsQuery = `
       INSERT INTO RepairDocs (FK_User_ID, FK_BookID, ServiceByName)
       VALUES (?, ?, ?);
@@ -69,7 +75,15 @@ export async function POST(req) {
           return { status: 200 };
         }
       } else {
-        await connection.query(insertBooksQuery, [bookqr, bookid, bookname, booktype, bookaddress]);
+        try {
+          await connection.query(insertBooksQuery, [bookqr, bookid, bookname, booktype, bookaddress]);
+        } catch (error) {
+          if (error.code === 'ER_DUP_ENTRY') {
+            await connection.query(updateBooksQuery, [bookqr, bookname, booktype, bookaddress, bookid]);
+          } else {
+            throw error;
+          }
+        }
         const [repairDocsResult] = await connection.query(insertRepairDocsQuery, [ID_User, bookid, servicebyname]);
         const repairId = repairDocsResult.insertId; // ใช้ insertId แทน
         console.log("RepairID after insert:", repairId);

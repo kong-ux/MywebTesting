@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Bar, BarChart, XAxis, YAxis, Pie, PieChart, Cell } from "recharts";
+import { ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { CalendarDatePicker } from "./calendar-date-picker";
 import dataCardBarChart from "./data";
 import {
@@ -28,7 +29,7 @@ import {
 
 // ฟังก์ชันสุ่มสีแบบ HSL
 const getRandomColor = () =>
-  `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
+  `hsl(${Math.floor(Math.random() * 360)}, 80%, 55%)`;
 
 export function BarChartMixed() {
   const [chartData, setChartData] = useState([]);
@@ -85,6 +86,9 @@ export function BarChartMixed() {
     color: chartColors[item.state] || "hsl(var(--chart-default))",
   }));
 
+  // Calculate total for percentage calculation
+  const total = chartData.reduce((sum, item) => sum + item.num, 0);
+
   return (
     <Card>
       <CardHeader>
@@ -113,39 +117,41 @@ export function BarChartMixed() {
       <CardContent>
         <ChartContainer>
           {/* Pie Chart */}
-          <PieChart width={200} height={200}>
+          <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartDataWithColors} dataKey="num" nameKey="state" label>
+            <Pie
+              data={chartDataWithColors}
+              className="text-2xl text-bold"
+              dataKey="num"
+              nameKey="state"
+              label
+            >
               {chartDataWithColors.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
+            <ChartLegend
+              content={<ChartLegendContent nameKey="state" />}
+              className="flex flex-wrap space-x-16 justify-center text-sm"
+            />
           </PieChart>
-
-          {/* Bar Chart */}
-          <BarChart data={chartDataWithColors} layout="vertical">
-            <YAxis
-              dataKey="state"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
-            <XAxis dataKey="num" type="number" hide />
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Bar
-              dataKey="num"
-              barSize={50}
-              radius={5}
-              // กำหนดสีให้แต่ละแท่งแยกกัน
-              fill={({ state }) =>
-                chartColors[state] || "hsl(var(--chart-default))"
-              }
-            />
-          </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm"></CardFooter>
+      <div className="m-8 space-y-6  ">
+        {chartDataWithColors.map((item, index) => (
+          <div
+            className="flex border-b place-content-between text-lg text-bold"
+            key={index}
+          >
+            <p>{item.state}</p>
+            <div className="flex space-x-2">
+              <p>{item.num}</p>
+              <p>รายการ</p>
+              <p>{((item.num / total) * 100).toFixed(2)}%</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </Card>
   );
 }

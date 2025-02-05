@@ -33,7 +33,7 @@ interface RepairDoc {
 }
 
 interface ItemData {
-  data: [RepairDoc];
+  data: RepairDoc;
 }
 
 const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
@@ -51,14 +51,14 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
   useEffect(() => {
     if (data) {
       setFormData(data);
+      console.log("formData:", formData);
       const initialServices: { [key: number]: string } = {};
       const initialStatuses: { [key: number]: string } = {}; // Add this line
       data.forEach((item, index) => {
-        initialServices[index] = getServiceValue(item.data[0].Service);
-        initialStatuses[index] = item.data[0].StatusName; // Add this line
+        initialServices[index] = getServiceValue(item.data.Service);
+        initialStatuses[index] = item.data.StatusName; // Add this line
       });
       setSelectedService(initialServices);
-
     }
   }, [data]);
 
@@ -142,7 +142,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
     }
 
     const submittedData = formData.map((item, index) => {
-      const Repair_ID = item.data[0].Repair_ID; 
+      const Repair_ID = item.data.Repair_ID; 
       const service = selectedService[index] === "อื่นๆ" ? formElements[`Service${index}`].value : selectedService[index];
       const serviceNote = formElements[`ServiceNote${index}`].value;
       const serviceDate = formElements[`ServiceDate${index}`].value;
@@ -204,7 +204,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
     return options.includes(service) ? service : "อื่นๆ";
   };
 
-  if (!formData.length) {
+  if (!formData.length || formData == undefined || formData == null) {
     return <>ไม่พบค่า</>;
   } else {
     return (
@@ -220,7 +220,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
             </Button>
           </div>
           {formData.map((item, index) => {
-            const formcolum = item.data[0];
+            const formcolum = item.data;
             return (
               <Card key={index} className="my-8">
                 <CardHeader>
