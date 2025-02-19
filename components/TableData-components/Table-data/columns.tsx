@@ -3,10 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Expense } from "./schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
+  
 import { Checkbox } from "@/components/ui/checkbox";
-
-
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -34,6 +32,15 @@ export const columns: ColumnDef<Expense>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "index",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ลำดับ" />
+    ),
+    cell: ({ row }) => (<div className="text-right">{row.index + 1}</div>),
+    enableSorting: true, // Enable sorting for this column
+    sortingFn: (rowA, rowB) => rowA.index - rowB.index, // Custom sorting function
+  },
+  {
     accessorKey: "Repair_ID",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="รหัสรายการซ่อม" />
@@ -51,12 +58,11 @@ export const columns: ColumnDef<Expense>[] = [
     cell: ({ row }) => (
       <div className="">{row.getValue("Username")}</div>
     ),
-
   },
   {
     accessorKey: "BookQR",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="รหัสบาร์โค้ด" />
+      <DataTableColumnHeader column={column} title="บาร์โค้ด" />
     ),
     cell: ({ row }) => (
       <div className="">{row.getValue("BookQR")}</div>
@@ -85,25 +91,32 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "BookType",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ชนิดหนังสือ" />
+      <DataTableColumnHeader column={column} title="ประเภททรัพยากร" />
     ),
     cell: ({ row }) => (
       <div className="">{row.getValue("BookType")}</div>
     ),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
+  
   {
     accessorKey: "Bookaddress",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="สถาณที่" />
+      <DataTableColumnHeader column={column} title="สถานที่จัดเก็บ" />
     ),  
     cell: ({ row }) => (
       <div className="">{row.getValue("Bookaddress")}</div>
     ),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     accessorKey: "Bookstate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="สถาณะหนังสือ" />
+      <DataTableColumnHeader column={column} title="สถานะหนังสือ" />
     ),
     cell: ({ row }) => {
       return (
@@ -119,7 +132,7 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "Service",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="บริการ" />
+      <DataTableColumnHeader column={column} title="รายการ" />
     ),
     cell: ({ row }) => {
       return (
@@ -135,7 +148,7 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "ServiceNote",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="บริการเพิ่มเติม" />
+      <DataTableColumnHeader column={column} title="เพิ่มเติม" />
     ),
     cell: ({ row }) => {
       return (
@@ -145,14 +158,12 @@ export const columns: ColumnDef<Expense>[] = [
       );
     },
     
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
+  
   },
   {
     accessorKey: "ServiceByName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ชื่อผู้แจ้ง" />
+      <DataTableColumnHeader column={column} title="ชื่อผู้แจ้ง" />
     ),
     cell: ({ row }) => {
       return (
@@ -161,7 +172,6 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
@@ -169,13 +179,13 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "ServiceDate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="วันที่บริการ" />
+      <DataTableColumnHeader column={column} title="วันที่ทำรายการ" />
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("ServiceDate"));
-      const formattedDate = date.toLocaleDateString("en-US", {
+      const formattedDate = date.toLocaleDateString("th-TH", {
         day: "2-digit",
-        month: "short",
+        month: "long",
         year: "numeric",
       });
       return (
@@ -193,7 +203,7 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "StatusName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="สถาณะ" />
+      <DataTableColumnHeader column={column} title="สถานะทรัพยากร" />
     ),
     cell: ({ row }) => {
       return (
@@ -204,17 +214,20 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     accessorKey: "StatusDate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="วันที่สถานะ" />
+      <DataTableColumnHeader column={column} title="วันที่อัปเดตสถานะ" />
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("StatusDate"));
-      const formattedDate = date.toLocaleDateString("en-US", {
+      const formattedDate = date.toLocaleDateString("th-TH", {
         day: "2-digit",
-        month: "short",
+        month: "long",
         year: "numeric",
       });
       return (
@@ -228,9 +241,5 @@ export const columns: ColumnDef<Expense>[] = [
       const [startDate, endDate] = value;
       return rowDate >= startDate && rowDate <= endDate;
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

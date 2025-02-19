@@ -26,7 +26,7 @@ const checkboxsubmit = (data, checkedItems, setIsuploading, showAlert) => {
       BookQR: item.BookQR,
     }));
   console.log(checkedData);
-  showAlert("คืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
+  showAlert("ทำการส่งคืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
     uploadData(checkedData, setIsuploading);
   });
 };
@@ -72,7 +72,7 @@ const Page = () => {
     const item = data.find((item) => item.Repair_ID === id);
     if (item) {
       console.log([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }]);
-      showAlert("คืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
+      showAlert("ทำการส่งคืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
         uploadData([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }], setIsuploading);
       });
     }
@@ -137,7 +137,8 @@ const Page = () => {
 
   return (
     <div className="m-4">
-      <h1 className="text-lg font-medium mb-4">คืนหนังสือ</h1>
+      <h1 className="text-3xl font-extrabold mb-4">อัพเดตทรัพยากร</h1>
+      <span>อัพเดตทรัพยากร ในการนำหนังสือขึ้นชั้น</span>
       <div className="flex space-x-4 items-center mb-4">
         <h2 className="font-medium">รายการที่เลือก</h2>
         <Input
@@ -147,6 +148,7 @@ const Page = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => handleSearch(e, data)}
+          autoFocus
         />
         {checkedCount > 0 && (
           <Button 
@@ -156,6 +158,7 @@ const Page = () => {
         )}
       </div>
       <div className="bg-card rounded-lg space-y-4">
+
         {data.map((item) => (
           <div
             key={item.Repair_ID}
@@ -163,27 +166,25 @@ const Page = () => {
               checkedItems[item.Repair_ID] ? "border border-green-500" : "border border-gray-200"
             }`}
           >
-            <div className="flex justify-between">
-              <h1 className="text-lg font-medium">รายการที่ {item.Repair_ID}</h1>
-              <h1 className="font-medium">รหัส QRCODE: {item.BookQR}</h1>
+            <div className="flex space-x-8">
+              <h1 className="text-lg font-medium">รหัสรายการซ่อม {item.Repair_ID}</h1>
+              <h1 className="text-lg font-medium">บาร์โค้ด {item.BookQR}</h1>
+              <p className="text-lg font-medium">รหัสหนังสือ {item.BookID}</p>
             </div>
             <div className="space-y-2">
-              <h2 className="font-medium">ข้อมูลหนังสือ</h2>
               <div className="flex space-x-4">
-                <p className="text-sm">ID: {item.BookID}</p>
-                <p className="text-sm">ชื่อ: {item.Bookname}</p>
-                <p className="text-sm">ประเภท: {item.BookType}</p>
-                <p className="text-sm">ที่อยู่: {item.Bookaddress}</p>
-              </div>
+                <p className="text-sm font-bold">ชื่อหนังสือ {item.Bookname}</p>
+              <p className="text-sm font-bold">สนถานะทรัพยากร {item.BookType}</p>
+              <p className="text-sm font-bold">สถานที่จัดเก็บ {item.Bookaddress}</p>
+                </div>
             </div>
             <div className="space-y-2">
-              <h2 className="font-medium">บริการ</h2>
               <div className="flex flex-wrap space-x-4">
-                <p className="text-sm">รายการซ่อม: {item.Service}</p>
-                {item.ServiceNote && <p className="text-sm">รายละเอียด: {item.ServiceNote}</p>}
-                <p className="text-sm">เวลา: {formatDate(item.ServiceDate)}</p>
-                <p className="text-sm">สถานะ: {item.StatusName}</p>
-                <p className="text-sm">อัปเดตเมื่อ: {formatDate(item.StatusDate)}</p>
+                <p className="text-sm">รายการ {item.Service}</p>
+                {item.ServiceNote && <p className="text-sm">เพิ่มเติม {item.ServiceNote}</p>}
+                <p className="text-sm font-bold">วันที่ทำรายการ {formatDate(item.ServiceDate)}</p>
+                <p className="text-sm font-bold">สถานะ {item.StatusName}</p>
+                <p className="text-sm font-bold">วันที่อัปเดตสถานะ {formatDate(item.StatusDate)}</p>
               </div>
             </div>
             <div className="flex justify-end items-center space-x-4">

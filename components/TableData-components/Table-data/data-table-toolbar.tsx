@@ -24,6 +24,7 @@ export function DataTableToolbar<TData>({
   const [typeBooks, setTypeBooks] = useState([]);
   const [addressBooks, setAddressBooks] = useState([]);
   const [status, setStatus] = useState([]);
+  const [service, setService] = useState([]);
   const isFiltered = table.getState().columnFilters.length > 0;
   const exportdata = () => {
     const visibleColumns = table
@@ -70,11 +71,12 @@ export function DataTableToolbar<TData>({
   useEffect(() => {
     async function fetchData() {
       try {
-        const { type_books, address_book, status } =
+        const { type_books, address_book, status, service } =
           await fetchTypeBooks_AddressBook();
         setTypeBooks(type_books);
         setAddressBooks(address_book);
         setStatus(status);
+        setService(service);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
       }
@@ -98,6 +100,16 @@ export function DataTableToolbar<TData>({
           }}
           className="h-8 w-[150px] lg:w-[250px]"
         />
+        {isFiltered && (
+          <Button
+            variant="ghost"
+            onClick={() => table.resetColumnFilters()}
+            className="h-8 px-2 lg:px-3"
+          >
+            ล้างการค้นหา
+            <Cross2Icon className="ml-2 h-4 w-4" />
+          </Button>
+        )}
 
         {table.getColumn("BookType") && (
           <DataTableFacetedFilter
@@ -113,22 +125,19 @@ export function DataTableToolbar<TData>({
             options={addressBooks}
           />
         )}
+        {table.getColumn("Service") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("Service")}
+            title="บริการ"
+            options={service}
+          />
+        )}
         {table.getColumn("StatusName") && (
           <DataTableFacetedFilter
             column={table.getColumn("StatusName")}
             title="สถาณะ"
             options={status}
           />
-        )}
-        {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => table.resetColumnFilters()}
-            className="h-8 px-2 lg:px-3"
-          >
-            Reset
-            <Cross2Icon className="ml-2 h-4 w-4" />
-          </Button>
         )}
         <CalendarDatePicker
           date={dateRange}

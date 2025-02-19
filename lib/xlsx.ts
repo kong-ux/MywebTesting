@@ -1,10 +1,27 @@
 import * as XLSX from "xlsx-js-style";
-import { NextResponse } from "next/server";
 
 export async function DownloadExcel(data: any[]) {
   // Create a new workbook and add a worksheet
   const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(data);
+  const dataWithNewHeaders = data.map((row, index) => {
+    const newRow: any = { ลำดับ: index + 1 };
+    if (row.Repair_ID) newRow.รหัสรายการซ่อม = row.Repair_ID;
+    if (row.Username) newRow.เจ้าหน้าที่ = row.Username;
+    if (row.BookQR) newRow.บาร์โค้ด = row.BookQR;
+    if (row.FK_BookID) newRow.รหัสหนังสือ = row.FK_BookID;
+    if (row.Bookname) newRow.ชื่อหนังสือ = row.Bookname;
+    if (row.BookType) newRow.ประเภททรัพยากร = row.BookType;
+    if (row.Bookaddress) newRow.สถานที่จัดเก็บ = row.Bookaddress;
+    if (row.Bookstate) newRow.สถานะหนังสือ = row.Bookstate;
+    if (row.Service) newRow.รายการ = row.Service;
+    if (row.ServiceNote) newRow.เพิ่มเติม = row.ServiceNote;
+    if (row.ServiceByName) newRow.ชื่อผู้แจ้ง = row.ServiceByName;
+    if (row.ServiceDate) newRow.วันที่ทำรายการ = row.ServiceDate;
+    if (row.StatusName) newRow.สถานะทรัพยากร = row.StatusName;
+    if (row.StatusDate) newRow.วันที่อัปเดตสถานะ = row.StatusDate;
+    return newRow;
+  });
+  const worksheet = XLSX.utils.json_to_sheet(dataWithNewHeaders);
 
   // Get the range of the sheet
   const range = XLSX.utils.decode_range(worksheet['!ref']!);

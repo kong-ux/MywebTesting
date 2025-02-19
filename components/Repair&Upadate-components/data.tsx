@@ -14,14 +14,14 @@ async function getData() {
 export default async function SheetData() {
   try {
     const data = await getData();
-    const Reported = data.filter(item => item.Service === "รับเรื่องแจ้งแล้ว" && item.Bookstate === "อยู่ในละหว่างดำเนินการ").map(item => ({
+    const Reported = data.filter(item => item.Service === "รับเรื่องแจ้งแล้ว" && item.Bookstate === "อยู่ระหว่างการทำรายการ").map(item => ({
       BookQR: item.BookQR,
       BookID: item.FK_BookID,
       Service: item.Service,
       ServiceDate: item.ServiceDate
     }));
 
-    const Working = data.filter(item => item.Service !== "รับเรื่องแจ้งแล้ว" && item.StatusName !== "เตรียมจำหน่ายออก" && item.StatusName !== "ดำเนินการเสร็จสิ้นพร้อมนำออกให้บริการ" && item.Bookstate === "อยู่ในละหว่างดำเนินการ").map(item => ({
+    const Working = data.filter(item => item.Service !== "รับเรื่องแจ้งแล้ว" && item.StatusName !== "อยู่รว่างรอขึ้นชั้น" && item.StatusName !== "ขึ้นชั้น" && item.Bookstate === "อยู่ระหว่างการทำรายการ").map(item => ({
       BookQR: item.BookQR,
       BookID: item.FK_BookID,
       Service: item.Service,

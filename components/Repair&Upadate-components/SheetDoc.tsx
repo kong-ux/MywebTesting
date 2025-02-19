@@ -40,7 +40,7 @@ const SheetTriggerButton = () => {
           <SheetDescription></SheetDescription>
         </SheetHeader>
         <div className="border- b border-gray-200">
-          <h1 className="textbold text-xl">อยู่ละหว่างรับเรื่อง</h1>
+          <h1 className="textbold text-xl">อยู่ระหว่างรับเรื่อง</h1>
           <div className="max-h-96 overflow-y-auto space-y-2">
             {Reported.length > 0 ? (
               Reported.map((item, index) => (
@@ -63,7 +63,7 @@ const SheetTriggerButton = () => {
           </div>
         </div>
         <div className="border-b">
-          <h1 className="textbold text-xl">อยู่ละหว่าดำเนินการ</h1>
+          <h1 className="textbold text-xl">อยู่ระหว่าดำเนินการ</h1>
           <div className="max-h-96 overflow-y-auto ">
             {Working.length > 0 ? (
               Working.map((item, index) => (

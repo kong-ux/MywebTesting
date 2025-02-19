@@ -30,11 +30,11 @@ export default async function dataCardDashboard(from: Date, to: Date) {
       (item) =>
         item.StatusName !== "อยู่ละหว่างรับเรื่อง" &&
         item.StatusName !== "ดำเนินการเสร็จสิ้นพร้อมนำออกให้บริการ" &&
-        item.StatusName !== "เตรียมจำหน่ายออก"
+        item.StatusName !== "เตรียมออกให้บริการ"
     ).length;
 
     const countProcesthree = data.filter(
-      (item) => item.StatusName === "เตรียมจำหน่ายออก"
+      (item) => item.StatusName === "เตรียมออกให้บริการ"
     ).length;
 
     const countProcesfour = data.filter(
@@ -44,7 +44,7 @@ export default async function dataCardDashboard(from: Date, to: Date) {
     const DataCardReporting = [
       { state: "อยู่ละหว่างรับเรื่อง", num: countInProgresone },
       { state: "อยู่หว่างดำเนินการ", num: countProcestwo },
-      { state: "เตรียมจำหน่ายออก", num: countProcesthree },
+      { state: "เตรียมออกให้บริการ", num: countProcesthree },
       { state: "ส่งคืนไปแล้ว", num: countProcesfour },
     ];
 

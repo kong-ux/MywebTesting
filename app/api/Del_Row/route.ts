@@ -9,7 +9,7 @@ export async function DELETE(req) {
 
   try {
     const Delrow = 'DELETE FROM RepairDocs WHERE Repair_ID = ?';
-    const UpdateBook = 'UPDATE Books SET Bookstate = "ออกจำหนายแล้ว" WHERE BookQR = ?';
+    const UpdateBook = 'UPDATE Books SET Bookstate = "ดูที่ชั้น" WHERE BookQR = ?';
     
     await connection.execute(Delrow, [Repair_ID]);
     await connection.execute(UpdateBook, [BookQR]);

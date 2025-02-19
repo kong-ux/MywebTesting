@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { useAlert } from "@/hooks/use-alert";
+import { Skeleton } from "@/components/ui/skeleton"
 
 import { Select, SelectTrigger, SelectValue ,SelectContent, SelectItem} from "../ui/select";
 
@@ -205,7 +206,18 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
   };
 
   if (!formData.length || formData == undefined || formData == null) {
-    return <>ไม่พบค่า</>;
+    return (
+      <>
+      กรุณากรอกข้อมูลก่อน
+      <div className="flex flex-col space-y-3">
+      <Skeleton className="h-[125px]rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[500px]" />
+      </div>
+    </div>
+    </>
+    )
   } else {
     return (
       <>
@@ -216,7 +228,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
               type="submit"
               disabled={isLoading}
             >
-              {isLoading ? "Loading..." : "UPLOAD"}
+              {isLoading ? "กำลังบันทึก..." : "บันทึก"}
             </Button>
           </div>
           {formData.map((item, index) => {
@@ -238,16 +250,16 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
                     <p>&nbsp;{formcolum.Bookname}</p>
                   </div>
                   <div>
-                    <Label className="text-lg font-bold">ชนิดหนังสือ</Label>
+                    <Label className="text-lg font-bold">ประเภททรัพยากร</Label>
                     <p>&nbsp;{formcolum.BookType}</p>
                   </div>
                   <div>
-                    <Label className="text-lg font-bold">สถาณที่หนังสือ</Label>
+                    <Label className="text-lg font-bold">สถานที่จัดเก็บ</Label>
                     <p>&nbsp;{formcolum.Bookaddress}</p>
                   </div>
                   <div className="flex space-x-24">
                     <div>
-                      <Label className="text-lg font-bold">สถาณะหนังสือ</Label>
+                      <Label className="text-lg font-bold">สถานะทรัพยากร</Label>
                       <p>&nbsp;{formcolum.Bookstate}</p>
                     </div>
                     <div>
@@ -322,7 +334,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
                             <SelectItem value="3">อยู่ระหว่างการซ่อม</SelectItem>
                             <SelectItem value="4">สือหายซื้อเล่มใหม่ทดแทน</SelectItem>
                             <SelectItem value="5">หนังสือหายซื้อเล่มเดิมทดแทน</SelectItem>
-                            <SelectItem value="6">เตรียมจำหน่ายออก</SelectItem>
+                            <SelectItem value="6">อยู่รว่างรอขึ้นชั้น</SelectItem>
                             
                           </SelectContent>
                         </Select>

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PenLine } from "lucide-react";
 import { useAlert } from "@/hooks/use-alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { FormControl } from "../ui/form";
 import { cn } from "@/lib/utils";
@@ -135,14 +136,25 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
   };
 
   if (!formData.length) {
-    return <>ไม่พบค่า</>;
+    return (
+      <>
+      กรุณากรอกข้อมูลก่อน
+      <div className="flex flex-col space-y-3">
+      <Skeleton className="h-[125px]rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[500px]" />
+      </div>
+    </div>
+    </>
+    )
   } else {
     return (
       <>
         <form className="space-y-8" onSubmit={handleSubmit}>
           <div className="w-full flex justify-end mb-4">
             <Button className="w-25 h-12 mr-8" type="submit" disabled={isLoading}>
-              {isLoading ? "Loading..." : "UPLOAD"}
+              {isLoading ? "กำลังโหลด..." : "เพิ่มรายการ"}
             </Button>
           </div>
           {formData.map((item, index) => {
@@ -203,7 +215,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
 
                   <div>
                     <Label htmlFor={`booktype${index}`} className="font-bold">
-                      ชนิดหนังชื่อ
+                      ประเภททรัพยากร
                     </Label>
                     <div className="relative items-center">
                       <Input
@@ -228,7 +240,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
 
                   <div>
                     <Label htmlFor={`bookaddress${index}`} className="font-bold">
-                      ที่อยู่หนังสื่อ
+                    สถานที่จัดเก็บ
                     </Label>
                     <div className="relative items-center">
                       <Input

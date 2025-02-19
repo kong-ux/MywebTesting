@@ -19,10 +19,10 @@ export async function POST(request: Request) {
     for (const itemId of Input_data_Array) {
       try {
         const [stateData] = await connection.query(checkstatebook, [itemId]);
-        if (stateData.length > 0 && stateData[0].Bookstate === 'อยู่ในละหว่างดำเนินการ') {
+        if (stateData.length > 0 && stateData[0].Bookstate === 'อยู่ระหว่างการทำรายการ') {
           inProgressItems.push({
             itemId,
-            message: `รหัสบาร์โค้ด ${itemId} อยู่ในละหว่างดำเนินการ`,
+            message: `รหัสบาร์โค้ด ${itemId} อยู่ระหว่างการทำรายการ`,
             status: 201,
           });
         }

@@ -13,9 +13,10 @@ import {
   startOfDay,
   endOfDay
 } from "date-fns";
-import { toDate, formatInTimeZone } from "date-fns-tz";
+import { toDate, formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 import { DateRange } from "react-day-picker";
 import { cva, VariantProps } from "class-variance-authority";
+import { th } from "date-fns/locale";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -34,18 +35,18 @@ import {
 import { Calendar } from "./ui/calendar";
 
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
+  "มกราคม",
+  "กุมภาพันธ์",
+  "มีนาคม",
+  "เมษายน",
+  "พฤษภาคม",
+  "มิถุนายน",
+  "กรกฎาคม",
+  "สิงหาคม",
+  "กันยายน",
+  "ตุลาคม",
+  "พฤศจิกายน",
+  "ธันวาคม"
 ];
 
 const multiSelectVariants = cva(
@@ -265,32 +266,32 @@ export const CalendarDatePicker = React.forwardRef<
     );
 
     const dateRanges = [
-      { label: "Today", start: today, end: today },
-      { label: "Yesterday", start: subDays(today, 1), end: subDays(today, 1) },
+      { label: "วันนี้", start: today, end: today },
+      { label: "เมื่อวาน", start: subDays(today, 1), end: subDays(today, 1) },
       {
-        label: "This Week",
+        label: "อาทิตย์นนี้",
         start: startOfWeek(today, { weekStartsOn: 1 }),
         end: endOfWeek(today, { weekStartsOn: 1 })
       },
       {
-        label: "Last Week",
+        label: "อาทิตย์ที่แล้ว",
         start: subDays(startOfWeek(today, { weekStartsOn: 1 }), 7),
         end: subDays(endOfWeek(today, { weekStartsOn: 1 }), 7)
       },
-      { label: "Last 7 Days", start: subDays(today, 6), end: today },
+      { label: "7วันก่อน", start: subDays(today, 6), end: today },
       {
-        label: "This Month",
+        label: "เดือนนี้",
         start: startOfMonth(today),
         end: endOfMonth(today)
       },
       {
-        label: "Last Month",
+        label: "เดื่อนที่แล้ว",
         start: startOfMonth(subDays(today, today.getDate())),
         end: endOfMonth(subDays(today, today.getDate()))
       },
-      { label: "This Year", start: startOfYear(today), end: endOfYear(today) },
+      { label: "ปีนี้", start: startOfYear(today), end: endOfYear(today) },
       {
-        label: "Last Year",
+        label: "ปีก่อน",
         start: startOfYear(subDays(today, 365)),
         end: endOfYear(subDays(today, 365))
       }
@@ -389,7 +390,7 @@ export const CalendarDatePicker = React.forwardRef<
     }, [highlightedPart, date]);
 
     const formatWithTz = (date: Date, fmt: string) =>
-      formatInTimeZone(date, timeZone, fmt);
+      formatInTimeZone(date, timeZone, fmt, { locale: th });
 
     return (
       <>

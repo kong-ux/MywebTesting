@@ -77,7 +77,7 @@ LEFT JOIN Status S ON RD.Repair_ID = S.FK_RepairID
   AND S.StatusDate = (SELECT MaxStatusDate FROM LatestStatus WHERE FK_RepairID = RD.Repair_ID)
 LEFT JOIN StatusType ST ON S.FK_StatusID = ST.StatusID
 WHERE 
-  B.Bookstate = 'อยู่ในละหว่างดำเนินการ'
+  B.Bookstate = 'อยู่ระหว่างการทำรายการ'
   AND B.BookQR IN (${placeholders});
 `;
 

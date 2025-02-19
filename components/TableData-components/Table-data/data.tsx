@@ -30,12 +30,18 @@ export default async function fetchTypeBooks_AddressBook() {
 
     const status = [
       ...new Set(data.map((item) => item.StatusName)) 
-    ].map((tauts) => ({
-      value: tauts,
-      label: tauts,
+    ].map((status) => ({
+      value: status,
+      label: status,
+    }));
+    const service = [
+      ...new Set(data.map((item) => item.Service))
+    ].map((service) => ({
+      value: service,
+      label: service,
     }));
 
-    return { type_books, address_book, status };
+    return { type_books, address_book, status, service };
   } catch (error) {
     console.error("Error fetching dropdown options:", error);
     return { type_books: [], address_book: [] }; 

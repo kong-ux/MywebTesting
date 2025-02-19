@@ -53,16 +53,16 @@ import {
           <DropdownMenuContent align="start">
             <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
               <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-              Asc
+            <p className="text-xs opacity-80">น้อยไปมาก</p>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
               <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-              Desc
+              <p className="text-xs opacity-80">มากไปน้อย</p>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
               <EyeNoneIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-              Hide
+              <p className="text-xs opacity-80">ซ่อนคอลัมน์</p>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

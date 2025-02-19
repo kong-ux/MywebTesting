@@ -23,7 +23,7 @@ import {
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 
 const chartColors = {
-  เตรียมจำหน่ายออก: "hsl(var(--chart-4))",
+  เตรียมออกให้บริการ: "hsl(var(--chart-4))",
 };
 
 const chartConfig: ChartConfig = {
@@ -48,7 +48,7 @@ export function CardRadyReleased() {
     async function fetchData() {
       try {
         const { DataCardReporting } = await dataCardDashboard(dateRange.from, dateRange.to);
-        const processingData = DataCardReporting.find(item => item.state === "เตรียมจำหน่ายออก");
+        const processingData = DataCardReporting.find(item => item.state === "เตรียมออกให้บริการ");
         setChartData(processingData ? [processingData] : []);
         const total = DataCardReporting.reduce((acc, curr) => acc + curr.num, 0);
         setTotalReports(total);
@@ -74,7 +74,7 @@ export function CardRadyReleased() {
   return (
     <Card className="flex flex-col">
       <CardHeader className="">
-        <CardTitle className="text-bold text-2xl">เตรียมจำหน่ายออก</CardTitle>
+        <CardTitle className="text-bold text-2xl">เตรียมออกให้บริการ</CardTitle>
         <CardDescription className="">
           <CalendarDatePicker
             date={dateRange}
@@ -140,10 +140,10 @@ export function CardRadyReleased() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          เหลือรายการเตรียมจำหน่ายออก {chartData[0]?.num?.toLocaleString() || 0} รายการ จากทั้งหมด {totalReports.toLocaleString()} รายการ
+          เหลือรายการเตรียมออกให้บริการ {chartData[0]?.num?.toLocaleString() || 0} รายการ จากทั้งหมด {totalReports.toLocaleString()} รายการ
         </div>
         <div className="leading-none text-muted-foreground">
-          ได้ดำเนินการเตรียมจำหน่ายออกไป {percentageCompleted.toFixed(2)} % จากทั้งหมด 100%
+          ได้ดำเนินการเตรียมออกให้บริการไป {percentageCompleted.toFixed(2)} % จากทั้งหมด 100%
         </div>
       </CardFooter>
     </Card>

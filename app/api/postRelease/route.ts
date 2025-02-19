@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   VALUES (?, ?, ?, ?);
 `;
   const bookupdate = `
- UPDATE Books SET Bookstate='ออกจำหนายแล้ว' WHERE BookQR = ?;
+ UPDATE Books SET Bookstate='ดูที่ชั้น' WHERE BookQR = ?;
 `;
   try {
     const promises = body.map(async dataquery => {

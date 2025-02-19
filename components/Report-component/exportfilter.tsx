@@ -1,0 +1,168 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+const items = [
+  {
+    id: "ลำดับ",
+    label: "ลำดับ",
+  },
+  {
+    id: "รหัสหนังสือ",
+    label: "รหัสหนังสือ",
+  },
+  {
+    id: "บาร์โค้ด",
+    label: "บาร์โค้ด",
+  },
+  {
+    id: "ชื่อหนังสือ",
+    label: "ชื่อหนังสือ",
+  },
+  {
+    id: "ประเภททรัพยากร",
+    label: "ประเภททรัพยากร",
+  },
+  {
+    id: "สถานที่จัดเก็บ",
+    label: "สถานที่จัดเก็บ",
+  },
+  {
+    id: "สถานะหนังสือ",
+    label: "สถานะหนังสือ",
+  },
+  {
+    id: "รายการ",
+    label: "รายการ",
+  },
+  {
+    id: "ชื่อผู้แจ้ง",
+    label: "ชื่อผู้แจ้ง",
+  },
+  {
+    id: "วันที่ทำรายการ",
+    label: "วันที่ทำรายการ",
+  },
+  {
+    id: "สถานะทรัพยากร",
+    label: "สถานะทรัพยากร",
+  },
+  {
+    id: "วันที่อัปเดตสถานะ",
+    label: "วันที่อัปเดตสถานะ",
+  },
+] as const;
+
+const FormSchema = z.object({
+  data: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: "ต้องเลือกอย่างน้อย 1 รายการ",
+  }),
+});
+
+export function XportFilter() {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+       data: ["ลำดับ", "บาร์โค้ด", "รายการ", "วันที่ทำรายการ", "สถานะทรัพยากร", "วันที่อัปเดตสถานะ"],
+    },
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Export</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>ข้อมูลทรัพยากร</DialogTitle>
+          <DialogDescription>
+            กรุณาเลือกข้อมูลที่ต้องการ Export
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="data"
+              render={() => (
+                <FormItem>
+                  {items.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="data"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              {item.label}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

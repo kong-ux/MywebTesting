@@ -27,7 +27,7 @@ export function DataTablePagination<TData>({
     <div className="flex flex-col items-center justify-between space-y-4 px-2 lg:flex-row lg:space-y-0">
       <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-6 sm:space-y-0">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">จำนวนแถวต่อหน้า</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -49,7 +49,7 @@ export function DataTablePagination<TData>({
       </div>
       <div className="flex items-center space-x-2">
         <div className="flex items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          หน้าที่ {table.getState().pagination.pageIndex + 1} /{" "}
           {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">

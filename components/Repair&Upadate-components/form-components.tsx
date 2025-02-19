@@ -59,7 +59,7 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
         const messages = rowResult.message.map((msg: string, index: number) => `มี ${msg}`);
         showAlert("ไม่สามารถดำเนินการ", messages.join("\n"), "OK");
       } else if (response.status === 200) {
-        showAlert("สร้างเรียบร้อย", "พบข้อมูล", "OK");
+        // showAlert("ดำเนินการ", "ทำการเรียบร้อย", "OK");
         OutputData(rowResult.data);
         
       } else {

@@ -27,16 +27,16 @@ export async function POST(req) {
 
     const checkDataBook = `SELECT BookQR FROM Books WHERE BookQR = ?;`;
     const checkstatebook = `SELECT BookID, Bookstate FROM Books WHERE BookQR = ?;`;
-    const updatestatebook = `UPDATE Books SET Bookstate='อยู่ในละหว่างดำเนินการ' WHERE BookQR = ?;`;
+    const updatestatebook = `UPDATE Books SET Bookstate='อยู่ระหว่างการทำรายการ' WHERE BookQR = ?;`;
 
     const insertBooksQuery = `    
     INSERT INTO Books (BookQR, BookID, Bookname, Booktype, Bookaddress, Bookstate)
-    VALUES (?, ?, ?, ?, ?, 'อยู่ในละหว่างดำเนินการ');
+    VALUES (?, ?, ?, ?, ?, 'อยู่ระหว่างการทำรายการ');
     `;
 
     const updateBooksQuery = `
       UPDATE Books
-      SET BookQR = ?, Bookname = ?, Booktype = ?, Bookaddress = ?, Bookstate = 'อยู่ในละหว่างดำเนินการ'
+      SET BookQR = ?, Bookname = ?, Booktype = ?, Bookaddress = ?, Bookstate = 'อยู่ระหว่างการทำรายการ'
       WHERE BookID = ?;
     `;
 
@@ -62,9 +62,8 @@ export async function POST(req) {
       if (bookData.length > 0) {
         const [stateData] = await connection.query(checkstatebook, [bookqr]);
     
-        if (stateData[0].Bookstate === 'อยู่ในละหว่างดำเนินการ') {
-          console.log("อยู่ในละหว่างดำเนินการ");
-          return { status: 201, message: `รหัสบาร์โค้ด ${bookqr} อยู่ในละหว่างดำเนินการ` };
+        if (stateData[0].Bookstate === 'อยู่ระหว่างการทำรายการ') {
+          return { status: 201, message: `รหัสบาร์โค้ด ${bookqr} อยู่ระหว่างการทำรายการ` };
         } else {
           await connection.query(updatestatebook, [bookqr]);
           const [repairDocsResult] = await connection.query(insertRepairDocsQuery, [ID_User, bookid, servicebyname]);

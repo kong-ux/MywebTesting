@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { ServiceForm } from "@/components/Repair&Upadate-components/form-components";
 import CreateFormService from "@/components/Repair&Upadate-components/Insert_Form_Service";
-// import { ServiceForm } from "@/components/Report-from-components/form-components";
-// import CreateFormService from "@/components/Report-from-components/Insert_Form_Service";
+
 import SheetTriggerButton from "@/components/Repair&Upadate-components/SheetDoc";
 
 const Page = () => {
@@ -30,7 +29,10 @@ const Page = () => {
       </div>
       <div className="w-full border-l border-gray-200 ">
         <div className="p-8 ">
-          <CreateFormService key={JSON.stringify(formData)} data={formData} />
+          <h1 className="text-3xl font-extrabold">รายการ</h1>
+          <div className="p-4">
+            <CreateFormService key={JSON.stringify(formData)} data={formData} />
+          </div>
         </div>
       </div>
     </div>
