@@ -22,22 +22,18 @@ async function getData() {
     }
 }
 
-export default async function fetchTypeBooks_AddressBook() {
+export default async function fetchServiceByName() {
     try {
         const data = await getData();
 
         // ✅ ใช้ Set() เพื่อลดค่าซ้ำ
-        const BookType = Array.from(new Set(data.map(item => item.BookType).filter(Boolean)));
-        const Bookaddress = Array.from(new Set(data.map(item => item.Bookaddress).filter(Boolean)));
-        const Bookstate = Array.from(new Set(data.map(item => item.Bookstate).filter(Boolean)));
-        const ServiceByName = Array.from(new Set(data.map(item => item.ServiceByName).filter(Boolean)));
-        const Service = Array.from(new Set(data.map(item => item.Service).filter(Boolean)));
-        const StatusName = Array.from(new Set(data.map(item => item.StatusName).filter(Boolean)));
-        const User = Array.from(new Set(data.map(item => item.UserAdminName).filter(Boolean)));
 
-        return { BookType, Bookaddress, Bookstate, ServiceByName, Service, StatusName, User };
+        const ServiceByName = Array.from(new Set(data.map(item => item.ServiceByName).filter(Boolean)));
+    
+
+        return { ServiceByName };
     } catch (error) {
         console.error("Error fetching dropdown options:", error);
-        return { BookType: [], Bookaddress: [], Bookstate: [], ServiceByName: [], Service: [], StatusName: [], User: [] };
+        return { ServiceByName: [] };
     }
 }

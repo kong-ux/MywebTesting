@@ -28,17 +28,17 @@ import {
     className
   }: DataTableColumnHeaderProps<TData, TValue>) {
     if (!column.getCanSort()) {
-      return <div className={cn(className)}>{title}</div>;
+      return <div className={cn(className, "text-black dark:text-white")}>{title}</div>;
     }
   
     return (
-      <div className={cn("flex items-center space-x-2", className)}>
+      <div className={cn("flex items-center space-x-2", className, "text-black dark:text-white")}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="sm"
-              className="-ml-3 h-8 data-[state=open]:bg-accent"
+              className="font-bold text-xl data-[state=open]:bg-accent"
             >
               <span>{title}</span>
               {column.getIsSorted() === "desc" ? (

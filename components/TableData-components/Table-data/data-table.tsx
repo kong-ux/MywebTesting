@@ -37,7 +37,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    Username: false,
+    UserAdminName: false,
     FK_BookID: false,
     ServiceNote: false,
     Repair_ID: false,
@@ -99,11 +99,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div ref={tableRef} className="space-y-4 m-8 m-auto relative" onClick={closeContextMenu}>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar  table={table} />
       <div className="overflow-y-auto rounded-md border">
         <DataTablePagination table={table} />
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-primary/20">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

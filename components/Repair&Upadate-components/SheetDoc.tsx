@@ -39,29 +39,6 @@ const SheetTriggerButton = () => {
           <SheetTitle className="text-2xl">รายการทั้งหมด</SheetTitle>
           <SheetDescription></SheetDescription>
         </SheetHeader>
-        <div className="border- b border-gray-200">
-          <h1 className="textbold text-xl">อยู่ระหว่างรับเรื่อง</h1>
-          <div className="max-h-96 overflow-y-auto space-y-2">
-            {Reported.length > 0 ? (
-              Reported.map((item, index) => (
-                <Card className="border p-2" key={index}>
-                  <div className="flex justify-between">
-                    <p>รหัส Barcode {item.BookQR}</p>
-                    <p>รหัส หนังสือ {item.BookID}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>บริการ {item.Service}</p>
-                    <p>วันที่ {formatDate(item.ServiceDate)}</p>
-                  </div>
-                </Card>
-              ))
-            ) : (
-              <Card className="border p-2">
-                <p className="text-bold">ไม่มีรายการ</p>
-              </Card>
-            )}
-          </div>
-        </div>
         <div className="border-b">
           <h1 className="textbold text-xl">อยู่ระหว่าดำเนินการ</h1>
           <div className="max-h-96 overflow-y-auto ">

@@ -21,7 +21,7 @@ async function getData() {
   }
 }
 
-export default async function searchdata(
+export default async function  searchdata(
   inputValue: string,
   selectedBookState: string[] | null,
   selectedBookType: string[] | null,
@@ -29,6 +29,7 @@ export default async function searchdata(
   selectedService: string[] | null,
   selectedServiceByName: string[] | null,
   selectedStatusName: string[] | null,
+  selectedUser: string[] | null,
   fromDate: string,
   toDate: string
 ) {
@@ -43,9 +44,9 @@ export default async function searchdata(
   // ✅ แปลงวันที่ให้เป็น YYYY-MM-DD
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return null;
-    return new Date(dateStr).toISOString().split("T")[0]; // ดึงเฉพาะ YYYY-MM-DD
+    const date = new Date(dateStr);
+    return date.toISOString().split("T")[0]; // YYYY-MM-DD
   };
-
   const from = formatDate(fromDate);
   const to = formatDate(toDate);
   const inputLower = (inputValue || "").trim().toLowerCase();
@@ -77,6 +78,10 @@ export default async function searchdata(
     const matchesStatusName =
       !selectedStatusName || selectedStatusName.length === 0 || selectedStatusName.some(status => item.StatusName?.trim().toLowerCase() === status.trim().toLowerCase());
 
+      const matchesUser =
+      !selectedUser || selectedUser.length === 0 || selectedUser.some(user => item.UserAdminName?.trim().toLowerCase() === user.trim().toLowerCase());
+    
+
     // ✅ เปรียบเทียบเฉพาะ YYYY-MM-DD
     const matchesDateRange =
       !from || !to || (StatusDate && StatusDate >= from && StatusDate <= to);
@@ -90,6 +95,7 @@ export default async function searchdata(
       (!selectedService || selectedService.length === 0) &&
       (!selectedServiceByName || selectedServiceByName.length === 0) &&
       (!selectedStatusName || selectedStatusName.length === 0) &&
+      (!selectedUser || selectedUser.length === 0) &&
       !fromDate &&
       !toDate;
 
@@ -103,6 +109,7 @@ export default async function searchdata(
         matchesService &&
         matchesServiceByName &&
         matchesStatusName &&
+        matchesUser &&
         matchesDateRange
       )
     );

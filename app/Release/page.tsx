@@ -26,7 +26,7 @@ const checkboxsubmit = (data, checkedItems, setIsuploading, showAlert) => {
       BookQR: item.BookQR,
     }));
   console.log(checkedData);
-  showAlert("ทำการส่งคืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
+  showAlert("ทำการส่งคืน", "ทำการนำหนังสือขึ้นชั้นหรือไม่", "Yes", () => {
     uploadData(checkedData, setIsuploading);
   });
 };
@@ -72,7 +72,7 @@ const Page = () => {
     const item = data.find((item) => item.Repair_ID === id);
     if (item) {
       console.log([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }]);
-      showAlert("ทำการส่งคืน", "ทำการคืนหนังสือหรือไม่", "Yes", () => {
+      showAlert("ทำการส่งคืน", "ทำการนำหนังสือขึ้นชั้นหรือไม่", "Yes", () => {
         uploadData([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }], setIsuploading);
       });
     }
@@ -154,7 +154,7 @@ const Page = () => {
           <Button 
           onClick={() => checkboxsubmit(data, checkedItems, setIsuploading, showAlert)}
           disabled={isuploading}
-          >{isLoading ? "Loading..." : "คืนหนังสือทั้งหมด"} {checkedCount}</Button>
+          >{isLoading ? "Loading..." : "นำหนังสือขึ้นชั้นทั้งหมด"} {checkedCount}</Button>
         )}
       </div>
       <div className="bg-card rounded-lg space-y-4">
@@ -169,7 +169,7 @@ const Page = () => {
             <div className="flex space-x-8">
               <h1 className="text-lg font-medium">รหัสรายการซ่อม {item.Repair_ID}</h1>
               <h1 className="text-lg font-medium">บาร์โค้ด {item.BookQR}</h1>
-              <p className="text-lg font-medium">รหัสหนังสือ {item.BookID}</p>
+              <p className="text-lg font-medium">รหัสหนังสือ {item.FK_BookID}</p>
             </div>
             <div className="space-y-2">
               <div className="flex space-x-4">
@@ -196,7 +196,7 @@ const Page = () => {
               />
               <Button onClick={() => submit(item.Repair_ID, data)}
               disabled={isuploading}
-                >{isLoading ? "Loading..." : "คืนหนังสือ"}</Button>
+                >{isLoading ? "Loading..." : "นำหนังสือขึ้นชั้น"}</Button>
             </div>
           </div>
         ))}

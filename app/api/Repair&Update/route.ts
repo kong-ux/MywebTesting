@@ -25,37 +25,22 @@ export async function POST(req: Request) {
     
     await connection.beginTransaction();
 
-    const checkService = `SELECT RD.Repair_ID,SV.Service FROM RepairDocs RD
-                    JOIN Service SV ON RD.Repair_ID = SV.FK_RepairID
-                    WHERE RD.Repair_ID = ? AND SV.Service = ?;`;
-
-    const insertSeverviceQuery = `
-      INSERT INTO Service (FK_RepairID, Service, ServiceNote, ServiceDate, FK_UserID)
-      VALUES (?, ?, ?, ?, ?);
-    `;
     const insertStatusQuery = `
       INSERT INTO Status (FK_RepairID, FK_UserID, FK_StatusID, StatusDate)
       VALUES (?, ?, ?, ?);
     `;
 
     const promises = body.map(async book => {
-      const { Repair_ID, service, serviceNote, serviceDate, status, StatusDate } = book;
-    
-      const [ServiceChecked] = await connection.query(checkService, [Repair_ID, service]);
-    
-      if (ServiceChecked.length > 0) {
-        console.log("insert Status");
-        await connection.query(insertStatusQuery, [Repair_ID, ID_User, status, StatusDate]);
+      const { Repair_ID, status, StatusDate } = book;
+      const date = new Date(StatusDate);
+      date.setHours(date.getHours() + 7); // Adjust for 7-hour difference
+      const formattedStatusDate = date.toISOString().slice(0, 19).replace('T', ' ');
 
-      } else {
-        console.log("insert service and status");
-        await connection.query(insertSeverviceQuery, [Repair_ID, service, serviceNote, serviceDate, ID_User]);
-        await connection.query(insertStatusQuery, [Repair_ID, ID_User, status, StatusDate]);
-      }
+      await connection.query(insertStatusQuery, [Repair_ID, ID_User, status, formattedStatusDate]);
+      console.log("Status inserted successfully.", connection.query(insertStatusQuery, [Repair_ID, ID_User, status, formattedStatusDate]));
     });
-
+    
     await Promise.all(promises);
-
     await connection.commit();
     console.log("Transaction committed successfully.");
     return NextResponse.json({ message: "ได้ทำการเรียบร้อย" }, { status: 200 });

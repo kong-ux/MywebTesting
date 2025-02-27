@@ -5,7 +5,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { CalendarDatePicker } from "@/components/calendar-date-picker";
+import { CalendarDatePicker } from "@/components/global/calendar-date-picker";
 import { useState, useEffect } from "react";
 import { DataTableViewOptions } from "./data-table-view-options";
 import fetchTypeBooks_AddressBook from "./data";

@@ -4,8 +4,8 @@ import { ReportForm } from "@/components/Report-component/Report-form-component"
 import { DataTable } from "@/components/Report-component/table";
 import { Button } from "@/components/ui/button";
 import { Summary } from "@/components/Report-component/Summary";
-import { DownloadExcel } from "@/lib/xlsx"; // Import the DownloadExcel function
 import {XportFilter} from "@/components/Report-component/exportfilter";
+import { generatePDF } from "@/lib/pdf"; // Update the import path
 
 const Page = () => {
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -13,10 +13,6 @@ const Page = () => {
 
   const handleFilteredData = (data: any[]) => {
     setFilteredData(data);
-  };
-
-  const handleDownloadExcel = () => {
-    DownloadExcel(filteredData);
   };
 
   const toggleSummary = () => {
@@ -36,13 +32,13 @@ const Page = () => {
             <div className="flex space-x-4">
               {filteredData.length > 0 && (
                 <>
-                  <Button variant={"outline"} onClick={handleDownloadExcel}>
-                    Export to Excel
-                  </Button>
+                  <XportFilter filteredData={filteredData} />
                   <Button variant={"outline"} onClick={toggleSummary}>
                     {showSummary ? "แสดงรายการ" : "ค่าสถิติ"}
                   </Button>
-                  <XportFilter />
+                  <Button variant={"outline"} onClick={() => generatePDF(filteredData)}>
+                    ส่งออก PDF
+                  </Button>
                 </>
               )}
             </div>

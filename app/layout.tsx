@@ -7,14 +7,13 @@ import { Navbar } from "@/components/Navbar/NavBar";
 import { AlertProvider } from "@/components/global/AlertDialog";
 import { ConfirmDialog } from "@/components/global/ConfirmDialog";
 import { Toaster } from "@/components/ui/toaster";
-import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "ARIT SERVICE",
   icons: {
-    icon: "/logo.png", // Default favicon
+    icon: "/logo.png",
     shortcut: "/logo.png",
-    apple: "/logo.png", // Apple Touch Icon
+    apple: "/logo.png", 
   },
 };
 
@@ -36,7 +35,7 @@ export default function RootLayout({
             <ConfirmDialog>
               <SidebarProvider>
                 <AppSidebar />
-                <main className="relative w-screen flex flex-col">
+                <main className="w-screen flex flex-col overflow-hidden">
                   <Navbar />
                   <div className="flex-grow">{children}</div>
                 </main>

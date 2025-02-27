@@ -18,7 +18,7 @@ export async function GET() {
                 )
                 SELECT 
                     RD.Repair_ID,
-                    U.Username,
+                    U.UserAdminName,
                     RD.FK_BookID,
                     B.BookQR,
                     B.Bookname,
@@ -36,8 +36,8 @@ export async function GET() {
                 JOIN LatestService SV ON RD.Repair_ID = SV.FK_RepairID AND SV.rn = 1  -- เลือก Service ล่าสุด
                 JOIN LatestStatus S ON RD.Repair_ID = S.FK_RepairID AND S.rn = 1  -- เลือก Status ล่าสุดก่อน
                 JOIN StatusType ST ON S.FK_StatusID = ST.StatusID
-                JOIN USER U ON U.ID_User = RD.FK_User_ID
-                WHERE S.FK_StatusID = 6;  -- เช็คสถานะล่าสุดว่าเป็น 6 หรือไม่
+                JOIN users U ON U.id = RD.FK_User_ID
+                WHERE S.FK_StatusID != 5; 
     `);
 
     return NextResponse.json(rows[0]);

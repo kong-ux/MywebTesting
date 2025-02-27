@@ -50,7 +50,7 @@ export function DataTableViewOptions<TData>({
               >
                 {column.id === "index" && "ลำดับ"}
                 {column.id === "Repair_ID" && "รหัสรายการซ่อม"}
-                {column.id === "Username" && "ผู้ทำราการ"}
+                {column.id === "UserAdminName" && "ผู้ทำราการ"}
                 {column.id === "BookQR" && "รหัสบาร์โค้ด"}
                 {column.id === "FK_BookID" && "รหัสหนังสือ"}
                 {column.id === "Bookname" && "ชื่อหนังสือ"}

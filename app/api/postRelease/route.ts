@@ -31,9 +31,8 @@ export async function POST(req: Request) {
   try {
     const promises = body.map(async dataquery => {
       const { Repair_ID, BookQR } = dataquery;
-      await connection.query(insertStatusQuery, [Repair_ID, ID_User, 7, new Date()]);
+      await connection.query(insertStatusQuery, [Repair_ID, ID_User, 5, new Date()]);
       await connection.query(bookupdate, [BookQR]);
-      console.log("+1");
 
     });
 

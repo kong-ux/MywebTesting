@@ -9,7 +9,7 @@ import {
   ArrowUpNarrowWide,
   Table2,
   SquareKanban,
-  BookUp2,
+  Clock2,
 } from "lucide-react"
 import { useSidebar } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main"
@@ -32,17 +32,17 @@ const Menu = {
       icon: House,
     },
     {
-      title: "เพิ่มรายการ",
+      title: "เพิ่มรายการแจ้งข้อมูลทรัพยากร",
       href: "/Report-form",
       icon: PenLine,
     },
     {
-      title: "ทำรายการซ่อม",
+      title: "สถานะการนำเนิดการ",
       href: "/Repair&Update",
       icon: BookMarked,
     },
     {
-      title: "อัพเดตทรัพยากร",
+      title: "นำหนังสือขึ้นชั้น",
       href: "/Release",
       icon: ArrowUpNarrowWide,
     },
@@ -54,13 +54,14 @@ const Menu = {
     {
       title: "รายงายการทรัพยากร",
       href: "/Report",
-      icon: BookUp2,
-    },
-    {
-      title: "DASHBOARD",
-      href: "/Dashboard",
       icon: SquareKanban,
     },
+    {
+      title: "ระยะเวลาการนำเนิดการทรัพยากร",
+      href: "/TimePeriodReport",
+      icon: Clock2,
+    },
+
   ]
 }
 

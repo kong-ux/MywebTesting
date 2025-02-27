@@ -6,7 +6,7 @@ let cacheTimestamp = null; // เก็บเวลาที่ข้อมู�
 
 export async function GET() {
   console.log("GET_WORKING ");
-  const CACHE_DURATION = 50 * 1000; // Cache 50 วินาที
+  const CACHE_DURATION = 3 * 1000; // Cache 3 วินาที
   const currentTime = Date.now();
 
   // ตรวจสอบว่าข้อมูลอยู่ใน cache และยังไม่หมดอายุ
@@ -35,7 +35,7 @@ LatestStatus AS (
 )
 SELECT 
     RD.Repair_ID,
-    U.Username,
+    U.UserAdminName,
     RD.FK_BookID,
     B.BookQR,
     B.Bookname,
@@ -53,7 +53,7 @@ JOIN RepairDocs RD ON B.BookID = RD.FK_BookID
 JOIN LatestService SV ON RD.Repair_ID = SV.FK_RepairID AND SV.rn = 1  -- เลือก Service ล่าสุด
 JOIN LatestStatus S ON RD.Repair_ID = S.FK_RepairID AND S.rn = 1  -- เลือก Status ล่าสุด
 JOIN StatusType ST ON S.FK_StatusID = ST.StatusID
-JOIN USER U ON U.ID_User = RD.FK_User_ID
+JOIN users U ON U.id = S.FK_UserID
 ORDER BY SV.ServiceDate ASC;
     `);
 

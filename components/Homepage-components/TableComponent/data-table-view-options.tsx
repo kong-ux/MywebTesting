@@ -48,7 +48,20 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {column.id === "index" && "ลำดับ"}
+                {column.id === "Repair_ID" && "รหัสรายการซ่อม"}
+                {column.id === "UserAdminName" && "ผู้ทำราการ"}
+                {column.id === "BookQR" && "รหัสบาร์โค้ด"}
+                {column.id === "FK_BookID" && "รหัสหนังสือ"}
+                {column.id === "Bookname" && "ชื่อหนังสือ"}
+                {column.id === "BookType" && "ชนิดหนังสือ"}
+                {column.id === "Bookaddress" && "สถาณที่"}
+                {column.id === "Bookstate" && "สถาณะหนังสือ"}
+                {column.id === "ServiceNote" && "บริการ"}
+                {column.id === "ServiceByName" && "บริการเพิ่มเติม"}
+                {column.id === "ServiceDate" && "ชื่อผู้แจ้ง"}
+                {column.id === "StatusName" && "วันที่บริการ"}
+                {column.id === "StatusDate" && "สถาณะ"}
               </DropdownMenuCheckboxItem>
             );
           })}

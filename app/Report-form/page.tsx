@@ -19,7 +19,7 @@ const Page = () => {
         <p className="mb-6 text-lg font-normal">กรอกรหัส Barcode หนังสือ</p>
         <ServiceForm OutputData={getdataform} />
       </div>
-      <div className="w-full border-l border-gray-200 overflow-y-auto h-screen">
+      <div className="w-full border-l border-gray-200 ">
         <div className="p-8">
           <CreateFormService key={JSON.stringify(formData)} data={formData} />
         </div>

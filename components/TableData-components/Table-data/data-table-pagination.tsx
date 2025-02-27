@@ -24,7 +24,7 @@ export function DataTablePagination<TData>({
   const totalRows = table.getCoreRowModel().rows.length; // Get total rows for the "All" option
 
   return (
-    <div className="flex flex-col items-center justify-between space-y-4 px-2 lg:flex-row lg:space-y-0">
+    <div className="flex flex-col items-center justify-between space-y-4 px-2 lg:flex-row lg:space-y-0 bg-primary/5">
       <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-6 sm:space-y-0">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">จำนวนแถวต่อหน้า</p>

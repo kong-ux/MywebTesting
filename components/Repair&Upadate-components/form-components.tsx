@@ -27,6 +27,12 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
     setInputs(newInputs);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
@@ -77,7 +83,7 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
 
   return (
     <div className="w-full max-w-sm space-y-2">
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
+      <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="flex flex-col space-y-3">
         {inputs.map((input, index) => (
           <div key={index}>
             <Input
@@ -89,7 +95,7 @@ export function ServiceForm({ OutputData }: ServiceFormProps) {
           </div>
         ))}
         <Button type="submit" disabled={loading}>
-          {loading ? "กำลังสร้าง..." : "สร้าง"}
+          {loading ? "กำลังค้นหา..." : "ค้นหา"}
         </Button>
       </form>
     </div>

@@ -1,30 +1,40 @@
 'use server';
+// นำเข้าโมดูลที่จำเป็น
 import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
 import bcrypt from "bcrypt";
 import {createSession} from "@/lib/session";
+
 export async function POST(req: Request) {
   try {
+    // อ่านข้อมูลจาก request body
     const body = await req.json();
     const { username, password } = body;
+    
+    // สร้างการเชื่อมต่อกับฐานข้อมูล
     const connection = await getConnection();
     const [rows]: any = await connection.query(
-      `SELECT * FROM USER WHERE Username = ?`,
+      `SELECT * FROM users WHERE UserAdminID = ?`,
       [username]
     );
 
+    // ตรวจสอบว่าพบผู้ใช้หรือไม่
     if (rows.length === 0) {
       return NextResponse.json({ message: "Login Fail(s)", status: 401 });
     }
-    const user = rows[0];;
-    const chekpass = await bcrypt.compare(password, user.pass);
+    const user = rows[0];
+    
+    // ตรวจสอบรหัสผ่าน
+    const chekpass = await bcrypt.compare(password, user.Password);
     const payload =  {
-        ID_User: user.ID_User,
-        Username: user.Username
+        ID_User: user.id,
+        Username: user.UserAdminName
       }
     if (!chekpass) {
-      return NextResponse.json({ message: "Login Fail", status: 401, });
+      return NextResponse.json({ message: "Login Fail", status: 401 });
     }
+    
+    // สร้าง session
     await createSession(payload);
     return NextResponse.json({ message: "Login Success", status: 200 });
   } catch (error) {

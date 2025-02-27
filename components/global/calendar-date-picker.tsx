@@ -11,9 +11,16 @@ import {
   startOfYear,
   endOfYear,
   startOfDay,
-  endOfDay
+  endOfDay,
+  isSameDay,
+  addMonths,
 } from "date-fns";
-import { toDate, formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import {
+  toDate,
+  formatInTimeZone,
+  utcToZonedTime,
+  zonedTimeToUtc,
+} from "date-fns-tz";
 import { DateRange } from "react-day-picker";
 import { cva, VariantProps } from "class-variance-authority";
 import { th } from "date-fns/locale";
@@ -23,16 +30,16 @@ import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "./ui/calendar";
+import { Calendar } from "../ui/calendar";
 
 const months = [
   "มกราคม",
@@ -46,7 +53,7 @@ const months = [
   "กันยายน",
   "ตุลาคม",
   "พฤศจิกายน",
-  "ธันวาคม"
+  "ธันวาคม",
 ];
 
 const multiSelectVariants = cva(
@@ -62,18 +69,19 @@ const multiSelectVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground text-background",
-        link: " underline-offset-4 hover:underline text-background"
-      }
+        link: " underline-offset-4 hover:underline text-background",
+      },
     },
     defaultVariants: {
-      variant: "default"
-    }
+      variant: "default",
+    },
   }
 );
 
 interface CalendarDatePickerProps
   extends React.HTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof multiSelectVariants> {
+  // Props for the CalendarDatePicker component
   id?: string;
   className?: string;
   date: DateRange;
@@ -101,6 +109,7 @@ export const CalendarDatePicker = React.forwardRef<
     },
     ref
   ) => {
+    // State variables
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [selectedRange, setSelectedRange] = React.useState<string | null>(
       numberOfMonths === 2 ? "This Year" : "Today"
@@ -122,12 +131,14 @@ export const CalendarDatePicker = React.forwardRef<
     );
 
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const today = toDate(new Date(), { timeZone });
 
     const handleClose = () => setIsPopoverOpen(false);
 
     const handleTogglePopover = () => setIsPopoverOpen((prev) => !prev);
 
     const selectDateRange = (from: Date, to: Date, range: string) => {
+      // Function to select a date range
       const startDate = startOfDay(toDate(from, { timeZone }));
       const endDate =
         numberOfMonths === 2 ? endOfDay(toDate(to, { timeZone })) : startDate;
@@ -137,7 +148,9 @@ export const CalendarDatePicker = React.forwardRef<
       setYearFrom(from.getFullYear());
       setMonthTo(to);
       setYearTo(to.getFullYear());
-      closeOnSelect && setIsPopoverOpen(false);
+      if (closeOnSelect) {
+        setIsPopoverOpen(false);
+      }
     };
 
     const handleDateSelect = (range: DateRange | undefined) => {
@@ -151,6 +164,9 @@ export const CalendarDatePicker = React.forwardRef<
             from = startOfDay(toDate(range.to as Date, { timeZone }));
           }
         }
+        if (from.getTime() === to.getTime()) {
+          to = endOfDay(from);
+        }
         onDateSelect({ from, to });
         setMonthFrom(from);
         setYearFrom(from.getFullYear());
@@ -161,6 +177,7 @@ export const CalendarDatePicker = React.forwardRef<
     };
 
     const handleMonthChange = (newMonthIndex: number, part: string) => {
+      // Function to handle month change
       setSelectedRange(null);
       if (part === "from") {
         if (yearFrom !== undefined) {
@@ -209,6 +226,7 @@ export const CalendarDatePicker = React.forwardRef<
     };
 
     const handleYearChange = (newYear: number, part: string) => {
+      // Function to handle year change
       setSelectedRange(null);
       if (part === "from") {
         if (years.includes(newYear)) {
@@ -258,43 +276,42 @@ export const CalendarDatePicker = React.forwardRef<
       }
     };
 
-    const today = new Date();
-
     const years = Array.from(
       { length: yearsRange + 1 },
       (_, i) => today.getFullYear() - yearsRange / 2 + i
     );
 
     const dateRanges = [
+      // Predefined date ranges
       { label: "วันนี้", start: today, end: today },
       { label: "เมื่อวาน", start: subDays(today, 1), end: subDays(today, 1) },
       {
         label: "อาทิตย์นนี้",
         start: startOfWeek(today, { weekStartsOn: 1 }),
-        end: endOfWeek(today, { weekStartsOn: 1 })
+        end: endOfWeek(today, { weekStartsOn: 1 }),
       },
       {
         label: "อาทิตย์ที่แล้ว",
         start: subDays(startOfWeek(today, { weekStartsOn: 1 }), 7),
-        end: subDays(endOfWeek(today, { weekStartsOn: 1 }), 7)
+        end: subDays(endOfWeek(today, { weekStartsOn: 1 }), 7),
       },
       { label: "7วันก่อน", start: subDays(today, 6), end: today },
       {
         label: "เดือนนี้",
         start: startOfMonth(today),
-        end: endOfMonth(today)
+        end: endOfMonth(today),
       },
       {
         label: "เดื่อนที่แล้ว",
         start: startOfMonth(subDays(today, today.getDate())),
-        end: endOfMonth(subDays(today, today.getDate()))
+        end: endOfMonth(subDays(today, today.getDate())),
       },
       { label: "ปีนี้", start: startOfYear(today), end: endOfYear(today) },
       {
         label: "ปีก่อน",
         start: startOfYear(subDays(today, 365)),
-        end: endOfYear(subDays(today, 365))
-      }
+        end: endOfYear(subDays(today, 365)),
+      },
     ];
 
     const handleMouseOver = (part: string) => {
@@ -306,6 +323,7 @@ export const CalendarDatePicker = React.forwardRef<
     };
 
     const handleWheel = (event: React.WheelEvent, part: string) => {
+      // Function to handle mouse wheel events
       event.preventDefault();
       setSelectedRange(null);
       if (highlightedPart === "firstDay") {
@@ -313,9 +331,11 @@ export const CalendarDatePicker = React.forwardRef<
         const increment = event.deltaY > 0 ? -1 : 1;
         newDate.setDate(newDate.getDate() + increment);
         if (newDate <= (date.to as Date)) {
-          numberOfMonths === 2
-            ? onDateSelect({ from: newDate, to: new Date(date.to as Date) })
-            : onDateSelect({ from: newDate, to: newDate });
+          if (numberOfMonths === 2) {
+            onDateSelect({ from: newDate, to: new Date(date.to as Date) });
+          } else {
+            onDateSelect({ from: newDate, to: newDate });
+          }
           setMonthFrom(newDate);
         } else if (newDate > (date.to as Date) && numberOfMonths === 1) {
           onDateSelect({ from: newDate, to: newDate });
@@ -346,7 +366,30 @@ export const CalendarDatePicker = React.forwardRef<
       }
     };
 
+    const handleDoubleClick = (day: Date) => {
+      const from = startOfDay(toDate(day, { timeZone }));
+      const to = endOfDay(from);
+
+      // Update state to match the selected date immediately
+      setMonthFrom(from);
+      setMonthTo(from);
+      setYearFrom(from.getFullYear());
+      setYearTo(from.getFullYear());
+
+      // Set the new date range
+      onDateSelect({ from, to });
+
+      // Reset the selected range
+      setSelectedRange(null);
+
+      // Close the popover if needed
+      if (closeOnSelect) {
+        setTimeout(() => setIsPopoverOpen(false), 0);
+      }
+    };
+
     React.useEffect(() => {
+      // Add event listeners for mouse wheel events
       const firstDayElement = document.getElementById(`firstDay-${id}`);
       const firstMonthElement = document.getElementById(`firstMonth-${id}`);
       const firstYearElement = document.getElementById(`firstYear-${id}`);
@@ -360,7 +403,7 @@ export const CalendarDatePicker = React.forwardRef<
         firstYearElement,
         secondDayElement,
         secondMonthElement,
-        secondYearElement
+        secondYearElement,
       ];
 
       const addPassiveEventListener = (element: HTMLElement | null) => {
@@ -369,7 +412,7 @@ export const CalendarDatePicker = React.forwardRef<
             "wheel",
             handleWheel as unknown as EventListener,
             {
-              passive: false
+              passive: false,
             }
           );
         }
@@ -388,9 +431,24 @@ export const CalendarDatePicker = React.forwardRef<
         });
       };
     }, [highlightedPart, date]);
+    React.useEffect(() => {
+      if (date?.from) {
+        setMonthFrom(date.from);
+        setYearFrom(date.from.getFullYear());
+      }
+      if (date?.to) {
+        setMonthTo(date.to);
+        setYearTo(date.to.getFullYear());
+      }
+    }, [date]);
 
-    const formatWithTz = (date: Date, fmt: string) =>
-      formatInTimeZone(date, timeZone, fmt, { locale: th });
+    const formatWithTz = (date: Date, fmt: string) => {
+      if (isNaN(date.getTime())) {
+        console.error("Invalid date value:", date);
+        return "";
+      }
+      return formatInTimeZone(date, timeZone, fmt, { locale: th });
+    };
 
     return (
       <>
@@ -552,10 +610,10 @@ export const CalendarDatePicker = React.forwardRef<
               onEscapeKeyDown={handleClose}
               style={{
                 maxHeight: "var(--radix-popover-content-available-height)",
-                overflowY: "auto"
+                overflowY: "auto",
               }}
             >
-              <div className="flex">
+              <div className="flex flex-col sm:flex-row">
                 {numberOfMonths === 2 && (
                   <div className="flex flex-col gap-1 pr-4 text-left border-r border-foreground/10">
                     {dateRanges.map(({ label, start, end }) => (
@@ -671,13 +729,23 @@ export const CalendarDatePicker = React.forwardRef<
                       mode="range"
                       defaultMonth={monthFrom}
                       month={monthFrom}
-                      onMonthChange={setMonthFrom}
+                      onMonthChange={(month) => {
+                        setMonthFrom(month);
+                        if (numberOfMonths === 2) {
+                          setMonthTo(addMonths(month, 1));
+                        }
+                      }}
                       selected={date}
-                      onSelect={handleDateSelect}
+                      onSelect={(range) => {
+                        if (!range) return;
+                        // กรณีเลือก Range
+                        handleDateSelect(range);
+                      }}
+                      onDayDoubleClick={(day) => handleDoubleClick(day)}
                       numberOfMonths={numberOfMonths}
                       showOutsideDays={false}
                       className={className}
-                    />
+                    />{" "}
                   </div>
                 </div>
               </div>
@@ -690,3 +758,5 @@ export const CalendarDatePicker = React.forwardRef<
 );
 
 CalendarDatePicker.displayName = "CalendarDatePicker";
+
+export default CalendarDatePicker;

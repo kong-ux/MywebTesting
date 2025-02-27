@@ -34,7 +34,7 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "index",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ลำดับ" />
+      <DataTableColumnHeader  column={column} title="ลำดับ" />
     ),
     cell: ({ row }) => (<div className="text-right">{row.index + 1}</div>),
     enableSorting: true, // Enable sorting for this column
@@ -51,12 +51,12 @@ export const columns: ColumnDef<Expense>[] = [
 
   },
   {
-    accessorKey: "Username",
+    accessorKey: "UserAdminName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ผู้ทำราการ" />
     ),
     cell: ({ row }) => (
-      <div className="">{row.getValue("Username")}</div>
+      <div className="">{row.getValue("UserAdminName")}</div>
     ),
   },
   {

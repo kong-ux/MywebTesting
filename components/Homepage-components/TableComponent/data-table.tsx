@@ -41,7 +41,7 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       Repair_ID: false,
-      Username: false,
+      UserAdminName: false,
       FK_BookID: false, 
       ServiceNote: false,
     });
@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
       <div className="overflow-y-auto rounded-md border">
       <DataTablePagination table={table} />
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-primary/10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

@@ -6,7 +6,7 @@ export const expenseSchema = z.object({
     
     index: z.string(),
     Repair_ID: z.string(),
-    Username: z.number(),
+    UserAdminName: z.string(),
     BookQR: z.string(),
     FK_BookID: z.string(),
     Bookname: z.string(),

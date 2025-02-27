@@ -20,7 +20,7 @@ interface DataTableProps {
     ServiceByName: string;
     Service: string;
     ServiceNote: string | null;
-    Username: string;
+    UserAdminName: string;
     ServiceDate: string;
     StatusName: string;
     StatusDate: string;
@@ -31,8 +31,8 @@ export function DataTable({ data }: DataTableProps) {
   return (
     <Table>
       <TableCaption>📚 รายการ</TableCaption>
-      <TableHeader>
-        <TableRow>
+      <TableHeader className="bg-primary/20 ">
+        <TableRow className="font-bold text-base text-black dark:text-white">
           <TableHead>ลำดับ</TableHead>
           <TableHead>รหัสหนังสือ</TableHead>
           <TableHead>บาร์โค้ด</TableHead>
@@ -62,7 +62,7 @@ export function DataTable({ data }: DataTableProps) {
             <TableCell>{item.ServiceByName}</TableCell>
             <TableCell>{item.Service}</TableCell>
             <TableCell>{item.ServiceNote ? item.ServiceNote : "-"}</TableCell>
-            <TableCell>{item.Username}</TableCell>
+            <TableCell>{item.UserAdminName}</TableCell>
             <TableCell>{new Date(item.ServiceDate).toLocaleDateString()}</TableCell>
             <TableCell>{item.StatusName}</TableCell>
             <TableCell>{new Date(item.StatusDate).toLocaleDateString()}</TableCell>

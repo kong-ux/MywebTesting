@@ -5,7 +5,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { CalendarDatePicker } from "@/components/calendar-date-picker";
+import { CalendarDatePicker } from "@/components/global/calendar-date-picker";
 import { useState, useEffect } from "react";
 import { DataTableViewOptions } from "./data-table-view-options";
 import fetchTypeBooks_AddressBook from "./data";
@@ -46,7 +46,7 @@ export function DataTableToolbar<TData>({
           (value instanceof Date || !isNaN(Date.parse(value)))
         ) {
           const date = new Date(value);
-          value = date.toLocaleDateString("en-GB", {
+          value = date.toLocaleDateString("th-TH", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
@@ -86,7 +86,8 @@ export function DataTableToolbar<TData>({
 
   const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
     setDateRange({ from, to });
-    table.getColumn("ServiceDate")?.setFilterValue([from, to]);
+    console.log("Selected Date Range:", (dateRange.from, dateRange.to));
+    table.getColumn("StatusDate")?.setFilterValue([from, to]);
   };
 
   return (

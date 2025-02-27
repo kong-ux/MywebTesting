@@ -47,7 +47,7 @@ export async function POST(req) {
 
     const insertSeverviceQuery = `
       INSERT INTO Service (FK_RepairID, Service, ServiceDate, FK_UserID)
-      VALUES (?, "รับเรื่องแจ้งแล้ว", ?, ?);
+      VALUES (?, ?, ?, ?);
     `;
     const insertStatusQuery = `
       INSERT INTO Status (FK_RepairID, FK_UserID, FK_StatusID, StatusDate)
@@ -55,7 +55,7 @@ export async function POST(req) {
     `;
 
     const promises = body.map(async book => {
-      const { bookqr, bookid, bookname, booktype, bookaddress, servicebyname, dateservice } = book;
+      const { bookqr, bookid, bookname, booktype, bookaddress, servicebyname, dateservice, service } = book;
     
       const [bookData] = await connection.query(checkDataBook, [bookqr]);
     
@@ -69,7 +69,7 @@ export async function POST(req) {
           const [repairDocsResult] = await connection.query(insertRepairDocsQuery, [ID_User, bookid, servicebyname]);
           const repairId = repairDocsResult.insertId; // ใช้ insertId แทน
           console.log("RepairID after update:", repairId);
-          await connection.query(insertSeverviceQuery, [repairId, dateservice, ID_User]);
+          await connection.query(insertSeverviceQuery, [repairId, service, dateservice, ID_User]);
           await connection.query(insertStatusQuery, [repairId, ID_User, dateservice]);
           return { status: 200 };
         }
@@ -86,7 +86,7 @@ export async function POST(req) {
         const [repairDocsResult] = await connection.query(insertRepairDocsQuery, [ID_User, bookid, servicebyname]);
         const repairId = repairDocsResult.insertId; // ใช้ insertId แทน
         console.log("RepairID after insert:", repairId);
-        await connection.query(insertSeverviceQuery, [repairId, dateservice, ID_User]);
+        await connection.query(insertSeverviceQuery, [repairId,service, dateservice, ID_User]);
         await connection.query(insertStatusQuery, [repairId, ID_User, dateservice]);
         return { status: 200 };
       }

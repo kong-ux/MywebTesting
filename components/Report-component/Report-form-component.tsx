@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { CalendarDatePicker } from "@/components/calendar-date-picker";
+import { CalendarDatePicker } from "@/components/global/calendar-date-picker";
 import fetchTypeBooks_AddressBook from "./data"; // Corrected import statement
 import searchdata from "./searchdata"; // Import searchdata function
 import { MultiSelect } from "@/components/ui/multi-select"; // Import MultiSelect component
+import { Calendar } from "@/components/ui/calendar"
 
 interface ReportFormProps {
   onFilteredData: (data: any[]) => void;
@@ -20,24 +21,29 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
   const [ServiceByName, setServiceByName] = useState<string[]>([]);
   const [Service, setService] = useState<string[]>([]);
   const [StatusName, setStatusName] = useState<string[]>([]);
+  const [User, setUser] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: new Date(new Date().getFullYear(), 0, 1),
     to: new Date(),
   });
 
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedBookState, setSelectedBookState] = useState<string | null>([]);
-  const [selectedBookType, setSelectedBookType] = useState<string | null>([]);
-  const [selectedBookAddress, setSelectedBookAddress] = useState<string | null>([]);
-  const [selectedService, setSelectedService] = useState<string | null>([]);
-  const [selectedServiceByName, setSelectedServiceByName] = useState<string | null>([]);
-  const [selectedStatusName, setSelectedStatusName] = useState<string | null>([]);
+  const [selectedBookState, setSelectedBookState] = useState<string[]>([]);
+  const [selectedBookType, setSelectedBookType] = useState<string[]>([]);
+  const [selectedBookAddress, setSelectedBookAddress] = useState<string[]>([]);
+  const [selectedService, setSelectedService] = useState<string[]>([]);
+  const [selectedServiceByName, setSelectedServiceByName] = useState<string[]>([]);
+  const [selectedStatusName, setSelectedStatusName] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [inputFromDate, setInputFromDate] = useState<string>("");
+  const [inputToDate, setInputToDate] = useState<string>("");
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const { BookType, Bookaddress, Bookstate, ServiceByName, Service, StatusName } =
+        const { BookType, Bookaddress, Bookstate, ServiceByName, Service, StatusName, User } =
           await fetchTypeBooks_AddressBook();
 
         // ✅ เซ็ตค่าใหม่โดยไม่เพิ่มซ้ำ
@@ -47,24 +53,45 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
         setServiceByName(ServiceByName || []);
         setService(Service || []);
         setStatusName(StatusName || []);
+        setUser(User || []);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
       }
     }
     fetchData();
   }, []); // ✅ useEffect เรียกใช้แค่ครั้งเดียว
+
   const handleDateSelect = ({ from, to }: { from: Date | null; to: Date | null }) => {
+    console.log("ค่าที่เลือก:", { from, to });
     setDateRange({ 
       from: from ?? new Date(new Date().getFullYear(), 0, 1), 
       to: to ?? new Date() 
     });
+    setInputFromDate(from ? from.toLocaleDateString("sv-SE") : "");
+    setInputToDate(to ? to.toLocaleDateString("sv-SE") : "");
+  };
+
+  const handleInputFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFromDate = e.target.value;
+    setInputFromDate(newFromDate);
+    const fromDate = new Date(newFromDate);
+    handleDateSelect({ from: fromDate, to: dateRange.to });
+  };
+
+  const handleInputToDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newToDate = e.target.value;
+    setInputToDate(newToDate);
+    const toDate = new Date(newToDate);
+    handleDateSelect({ from: dateRange.from, to: toDate });
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const fromDate = dateRange.from.toISOString().split("T")[0];
-    const toDate = dateRange.to.toISOString().split("T")[0];
+    const fromDate = dateRange.from.toLocaleDateString("sv-SE"); 
+    const toDate = new Date(dateRange.to);
+    toDate.setHours(23, 59, 59, 999); // Ensure the end of the day is included
+    const toDateString = toDate.toLocaleDateString("sv-SE");
     console.log("ข้อมูลSearch :", {
       inputValue,
       selectedBookState,
@@ -73,23 +100,25 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
       selectedService,
       selectedServiceByName,
       selectedStatusName,
+      selectedUser,
       fromDate,
-      toDate,
+      toDateString,
     });
     
       const filteredData = await searchdata(
         inputValue || "", // Ensure inputValue is a string
-        selectedBookState || "", 
-        selectedBookType || "",
-        selectedBookAddress || "",
-        selectedService || "",
-        selectedServiceByName || "",
-        selectedStatusName || "",
+        selectedBookState || [], 
+        selectedBookType || [],
+        selectedBookAddress || [],
+        selectedService || [],
+        selectedServiceByName || [],
+        selectedStatusName || [],
+        selectedUser  || [],
         fromDate,
-        toDate
+        toDateString
       );
       
-    // console.log("Filtered Data:", filteredData);
+    console.log("Filtered Data:", filteredData);
     onFilteredData(filteredData);
     setLoading(false);
   };
@@ -146,6 +175,16 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
             placeholder="สถานะทรัพยากร"
             onChange={setSelectedStatusName}
           />
+          {/* ✅ User */}
+          <MultiSelect
+          options={User.map((user) => ({ label: user, value: user }))}
+          placeholder="เจ้าหน้าที่"
+          onChange={setSelectedUser}
+        />
+        </div>
+
+        <div className="space-y-4 space-x-2 w-1/4">
+          <div className="flex items-center space-x-2">
 
           {/* ✅ CalendarDatePicker */}
           <CalendarDatePicker
@@ -153,10 +192,22 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
             onDateSelect={handleDateSelect}
             className="w-full"
             variant="outline"
+            />
+            <Input
+            type="date"
+            value={inputFromDate}
+            onChange={handleInputFromDateChange}
+            placeholder="จากวันที่"
           />
-        </div>
-
-        <div className="space-y-4 space-x-2 w-1/4">
+          <div className="text-center px-2 w-full">ถึง</div>
+          <Input
+          
+            type="date"
+            value={inputToDate}
+            onChange={handleInputToDateChange}
+            placeholder="ถึงวันที่"
+          />
+            </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "กำลังค้นหา..." : "ค้นหา"}
           </Button>

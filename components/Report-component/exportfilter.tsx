@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { DownloadExcelWithFilter } from "@/lib/xlsx"; // Import the DownloadExcel function
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,6 +32,10 @@ const items = [
     label: "ลำดับ",
   },
   {
+    id: "รหัสรายการซ่อม",
+    label: "รหัสรายการซ่อม"
+  },
+  {
     id: "รหัสหนังสือ",
     label: "รหัสหนังสือ",
   },
@@ -54,6 +58,10 @@ const items = [
   {
     id: "สถานะหนังสือ",
     label: "สถานะหนังสือ",
+  },
+  {
+    id: "เจ้าหน้าที่",
+    label: "เจ้าหน้าที่",
   },
   {
     id: "รายการ",
@@ -83,30 +91,41 @@ const FormSchema = z.object({
   }),
 });
 
-export function XportFilter() {
+export function XportFilter({ filteredData }: { filteredData: any }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-       data: ["ลำดับ", "บาร์โค้ด", "รายการ", "วันที่ทำรายการ", "สถานะทรัพยากร", "วันที่อัปเดตสถานะ"],
+      data: ["ลำดับ", "รหัสหนังสือ", "บาร์โค้ด", "ชื่อหนังสือ", "ประเภททรัพยากร", "สถานที่จัดเก็บ", "รายการ", "วันที่ทำรายการ", "สถานะทรัพยากร", "วันที่อัปเดตสถานะ", "ชื่อผู้แจ้ง"],
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    const selectedColumns = data.data;
+    const filteredColumnsData = filteredData.map((row: any, index: number) => {
+      const newRow: any = { ลำดับ: index + 1 };
+      if (selectedColumns.includes("รหัสรายการซ่อม") && row.Repair_ID) newRow.รหัสรายการซ่อม = row.Repair_ID;
+      if (selectedColumns.includes("เจ้าหน้าที่") && row.UserAdminName) newRow.เจ้าหน้าที่ = row.UserAdminName;
+      if (selectedColumns.includes("บาร์โค้ด") && row.BookQR) newRow.บาร์โค้ด = row.BookQR;
+      if (selectedColumns.includes("รหัสหนังสือ") && row.FK_BookID) newRow.รหัสหนังสือ = row.FK_BookID;
+      if (selectedColumns.includes("ชื่อหนังสือ") && row.Bookname) newRow.ชื่อหนังสือ = row.Bookname;
+      if (selectedColumns.includes("ประเภททรัพยากร") && row.BookType) newRow.ประเภททรัพยากร = row.BookType;
+      if (selectedColumns.includes("สถานที่จัดเก็บ") && row.Bookaddress) newRow.สถานที่จัดเก็บ = row.Bookaddress;
+      if (selectedColumns.includes("สถานะหนังสือ") && row.Bookstate) newRow.สถานะหนังสือ = row.Bookstate;
+      if (selectedColumns.includes("รายการ") && row.Service) newRow.รายการ = row.Service;
+      if (selectedColumns.includes("เพิ่มเติม") && row.ServiceNote) newRow.เพิ่มเติม = row.ServiceNote;
+      if (selectedColumns.includes("ชื่อผู้แจ้ง") && row.ServiceByName) newRow.ชื่อผู้แจ้ง = row.ServiceByName;
+      if (selectedColumns.includes("วันที่ทำรายการ") && row.ServiceDate) newRow.วันที่ทำรายการ = row.ServiceDate;
+      if (selectedColumns.includes("สถานะทรัพยากร") && row.StatusName) newRow.สถานะทรัพยากร = row.StatusName;
+      if (selectedColumns.includes("วันที่อัปเดตสถานะ") && row.StatusDate) newRow.วันที่อัปเดตสถานะ = row.StatusDate;
+      return newRow;
     });
+    DownloadExcelWithFilter(filteredColumnsData, selectedColumns);
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Export</Button>
+        <Button variant="outline">Export Excel</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
