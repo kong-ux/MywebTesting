@@ -37,8 +37,8 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader  column={column} title="ลำดับ" />
     ),
     cell: ({ row }) => (<div className="text-right">{row.index + 1}</div>),
-    enableSorting: true, // Enable sorting for this column
-    sortingFn: (rowA, rowB) => rowA.index - rowB.index, // Custom sorting function
+    enableSorting: true, 
+    sortingFn: (rowA, rowB) => rowA.index - rowB.index,
   },
   {
     accessorKey: "Repair_ID",

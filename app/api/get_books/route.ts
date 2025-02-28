@@ -2,8 +2,17 @@ import { NextResponse } from 'next/server';
 import { getConnection } from "@/lib/db";
 const API_url = "https://library.psru.ac.th/portal/book_api/";
 const Header_token = "271724c92d334b54f4388164c216a03c";
+const allowedBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function POST(request: Request) {
+  const referer = request.headers.get('referer');
+  if (!referer || !referer.startsWith(allowedBaseUrl)) {
+    return NextResponse.json(
+      { error: "Unauthorized access" },
+      { status: 403 }
+    );
+  }
+
   const connection = await getConnection();
 
   try {

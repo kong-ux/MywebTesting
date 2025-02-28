@@ -1,8 +1,8 @@
 async function getData() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getdata`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getdata/property`);
 
   if (!res.ok) {
-    console.log("Fetching data from:", `${process.env.NEXT_PUBLIC_BASE_URL}/api/getdata`);
+    console.log("Fetching data from:", `${process.env.NEXT_PUBLIC_BASE_URL}/api/getdata/property`);
     throw new Error("Failed to fetch data");
   }
 

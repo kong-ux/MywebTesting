@@ -8,7 +8,7 @@ const Page = () => {
   const [formData, setFormData] = useState<any>(null);
 
   const getdataform = (data: any) => {
-    console.log("Data received:", data);
+    // console.log("Data received:", data);
     setFormData(data); // เก็บ data ที่ได้จาก ServiceForm
   };
 

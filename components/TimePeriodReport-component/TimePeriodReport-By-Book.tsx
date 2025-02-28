@@ -52,11 +52,11 @@ const TimePeriodReport = () => {
   return (
     <div className="p-4">
       <h1 className="text-3xl font-extrabold">
-        ตรวจสอบเวลาการดำเนิการทรัพยากร
+        ตรวจสอบเวลาการดำเนินการทรัพยากร
       </h1>
       <div className="mt-4 space-y-4">
         <h2 className="text-xl font-bold">
-          ตรวจสอบเวลาการดำเนิการทรัพยากร BarCode
+          ตรวจสอบเวลาการดำเนินการทรัพยากร BarCode
         </h2>
         <form onSubmit={handlesubmit} className="flex space-x-4">
           <Input

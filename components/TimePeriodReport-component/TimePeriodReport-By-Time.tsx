@@ -68,11 +68,11 @@ const TimePeriodReportByCarlendar = () => {
   return (
     <div className="py-8">
       <h1 className="text-3xl font-extrabold">
-        ตรวจสอบเวลาการดำเนิการทรัพยากร
+        ตรวจสอบเวลาการดำเนินการทรัพยากร
       </h1>
       <div className="mt-4 space-y-4">
         <h2 className="text-xl font-bold">
-          ตรวจสอบเวลาการดำเนิการทรัพยากร
+          ตรวจสอบเวลาการดำเนินการทรัพยากร
         </h2>
         <p className="text-gray-600">
           กรุณาเลือกช่วงวันที่เพื่อตรวจสอบเวลาการดำเนิการทรัพยากร

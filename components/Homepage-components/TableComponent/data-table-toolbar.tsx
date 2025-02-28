@@ -60,7 +60,7 @@ export function DataTableToolbar<TData>({
       });
       return filteredData;
     });
-    console.log("DownloadExcel", data);
+    // console.log("DownloadExcel", data);
     DownloadExcel(data);
   };
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({

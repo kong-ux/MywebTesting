@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
-
-export async function GET() {
+const allowedBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export async function GET(req: Request) {
+     const referer = req.headers.get('referer');
+      if (!referer || !referer.startsWith(allowedBaseUrl)) {
+        return NextResponse.json(
+          { error: "Unauthorized access" },
+          { status: 403 }
+        );
+      }
     const connection = await getConnection();
   try {
     // Fetch ข้อมูลใหม่จากฐานข้อมูล

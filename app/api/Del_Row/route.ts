@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
 
+const allowedBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export async function DELETE(req) {
+   const referer = req.headers.get('referer');
+    if (!referer || !referer.startsWith(allowedBaseUrl)) {
+      return NextResponse.json(
+        { error: "Unauthorized access" },
+        { status: 403 }
+      );
+    }
   const connection = await getConnection();
   const body = await req.json(); // Parse incoming JSON data
 

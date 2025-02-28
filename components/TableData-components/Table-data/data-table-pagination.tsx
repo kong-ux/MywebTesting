@@ -14,14 +14,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+/**
+ * อินเทอร์เฟซสำหรับพร็อพของ DataTablePagination
+ * @template TData - ประเภทของข้อมูลในตาราง
+ */
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
 }
 
+/**
+ * คอมโพเนนต์สำหรับการแบ่งหน้าในตารางข้อมูล
+ * @template TData - ประเภทของข้อมูลในตาราง
+ * @param {DataTablePaginationProps<TData>} props - พร็อพของคอมโพเนนต์
+ * @returns {JSX.Element} - องค์ประกอบ JSX ของการแบ่งหน้าในตารางข้อมูล
+ */
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
-  const totalRows = table.getCoreRowModel().rows.length; // Get total rows for the "All" option
+  const totalRows = table.getCoreRowModel().rows.length; // รับจำนวนแถวทั้งหมดสำหรับตัวเลือก "All"
 
   return (
     <div className="flex flex-col items-center justify-between space-y-4 px-2 lg:flex-row lg:space-y-0 bg-primary/5">
@@ -59,7 +69,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">ไปที่หน้าแรก</span>
             <DoubleArrowLeftIcon className="h-4 w-4" />
           </Button>
           <Button
@@ -68,7 +78,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">ไปที่หน้าก่อนหน้า</span>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
           <Button
@@ -77,7 +87,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">ไปที่หน้าถัดไป</span>
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
           <Button
@@ -86,7 +96,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
+            <span className="sr-only">ไปที่หน้าสุดท้าย</span>
             <DoubleArrowRightIcon className="h-4 w-4" />
           </Button>
         </div>

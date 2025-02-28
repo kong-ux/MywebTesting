@@ -15,9 +15,11 @@ interface DataTableRowActionsProps<TData> {
   mouseY: number;
   closeMenu: () => void;
 }
+
+// ฟังก์ชัน deleteRow ใช้สำหรับลบแถวข้อมูล
 const deleteRow = async (row: any) => {
   const data = {
-    Repair_ID: row.Repair_ID, 
+    Repair_ID: row.Repair_ID,
     BookQR: row.BookQR,
   };
   try {
@@ -32,7 +34,9 @@ const deleteRow = async (row: any) => {
     if (!response.ok) {
       const errorMessage = await response.text();
       console.error("Error Response:", errorMessage);
-      throw new Error(`HTTP error! status: ${response.status} - ${errorMessage}`);
+      throw new Error(
+        `HTTP error! status: ${response.status} - ${errorMessage}`
+      );
     }
 
     const result = await response.json();
@@ -44,6 +48,8 @@ const deleteRow = async (row: any) => {
     throw error;
   }
 };
+
+// คอมโพเนนต์ DataTableRowActions ใช้สำหรับแสดงเมนูการกระทำของแถวข้อมูล
 export function DataTableRowActions<TData>({
   row,
   mouseX,
@@ -65,9 +71,7 @@ export function DataTableRowActions<TData>({
         onClick={(e) => e.stopPropagation()} // ป้องกันการปิดเมื่อคลิกในเมนู
       >
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          ตรวจสอบข้อมูล
-        </DropdownMenuItem>
+        <DropdownMenuItem>ตรวจสอบข้อมูล</DropdownMenuItem>
         <DropdownMenuItem
           onClick={() =>
             showAlert(

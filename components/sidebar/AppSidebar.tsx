@@ -57,7 +57,7 @@ const Menu = {
       icon: SquareKanban,
     },
     {
-      title: "ระยะเวลาการนำเนิดการทรัพยากร",
+      title: "ระยะเวลาการนำเนินการทรัพยากร",
       href: "/TimePeriodReport",
       icon: Clock2,
     },

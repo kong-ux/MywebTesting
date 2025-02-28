@@ -252,7 +252,7 @@ const Create_Form_Service = ({ data }: { data: ItemData[] | null }) => {
                   </div>
 
                   <div>
-                    <Label htmlFor={`booknaome${index}`} className="font-bold">
+                    <Label htmlFor={`booknaome${index}`} className="font-bold dark:text-red-500">
                       ชื่อหนังสือ
                     </Label>
                     <div className="relative items-center">

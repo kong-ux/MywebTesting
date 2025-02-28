@@ -25,7 +25,7 @@ const checkboxsubmit = (data, checkedItems, setIsuploading, showAlert) => {
       Repair_ID: item.Repair_ID,
       BookQR: item.BookQR,
     }));
-  console.log(checkedData);
+  // console.log(checkedData);
   showAlert("ทำการส่งคืน", "ทำการนำหนังสือขึ้นชั้นหรือไม่", "Yes", () => {
     uploadData(checkedData, setIsuploading);
   });
@@ -34,21 +34,24 @@ const checkboxsubmit = (data, checkedItems, setIsuploading, showAlert) => {
 const uploadData = async (data, setIsuploading) => {
   setIsuploading(true);
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/postRelease`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/postRelease`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const result = await response.json();
-    console.log("Result:", result);
+    // console.log("Result:", result);
     window.location.reload();
   } catch (error) {
-    console.error("Upload Error:", error.message);
+    // console.error("Upload Error:", error.message);
   } finally {
     setIsuploading(false);
   }
@@ -57,7 +60,7 @@ const uploadData = async (data, setIsuploading) => {
 const Page = () => {
   const [checkedItems, setCheckedItems] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [isuploading, setIsuploading] = useState(false); 
+  const [isuploading, setIsuploading] = useState(false);
   const { toast } = useToast();
   const { showAlert } = useConfirmDialog();
 
@@ -71,9 +74,12 @@ const Page = () => {
   const submit = (id, data) => {
     const item = data.find((item) => item.Repair_ID === id);
     if (item) {
-      console.log([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }]);
+      // console.log([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }]);
       showAlert("ทำการส่งคืน", "ทำการนำหนังสือขึ้นชั้นหรือไม่", "Yes", () => {
-        uploadData([{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }], setIsuploading);
+        uploadData(
+          [{ Repair_ID: item.Repair_ID, BookQR: item.BookQR }],
+          setIsuploading
+        );
       });
     }
   };
@@ -99,7 +105,6 @@ const Page = () => {
         toast({
           variant: "destructive",
           description: `ไม่พบรหัสดังกล่าว`,
-      
         });
       }
     }
@@ -151,60 +156,75 @@ const Page = () => {
           autoFocus
         />
         {checkedCount > 0 && (
-          <Button 
-          onClick={() => checkboxsubmit(data, checkedItems, setIsuploading, showAlert)}
-          disabled={isuploading}
-          >{isLoading ? "Loading..." : "นำหนังสือขึ้นชั้นทั้งหมด"} {checkedCount}</Button>
+          <Button
+            onClick={() =>
+              checkboxsubmit(data, checkedItems, setIsuploading, showAlert)
+            }
+            disabled={isuploading}
+          >
+            {isLoading ? "Loading..." : "นำหนังสือขึ้นชั้นทั้งหมด"}{" "}
+            {checkedCount}
+          </Button>
         )}
       </div>
       <div className="bg-card rounded-lg space-y-4">
-
-        {data.map((item) => (
-          <div
-            key={item.Repair_ID}
-            className={`space-y-4 p-4 rounded-lg ${
-              checkedItems[item.Repair_ID] ? "border border-green-500" : "border border-gray-200"
-            }`}
-          >
-            <div className="flex space-x-8">
-              <h1 className="text-lg font-medium">รหัสรายการซ่อม {item.Repair_ID}</h1>
-              <h1 className="text-lg font-medium">บาร์โค้ด {item.BookQR}</h1>
-              <p className="text-lg font-medium">รหัสหนังสือ {item.FK_BookID}</p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex space-x-4">
-                <p className="text-sm font-bold">ชื่อหนังสือ {item.Bookname}</p>
-              <p className="text-sm font-bold">สนถานะทรัพยากร {item.BookType}</p>
-              <p className="text-sm font-bold">สถานที่จัดเก็บ {item.Bookaddress}</p>
+        {data
+          .filter((item) => checkedItems[item.Repair_ID])
+          .map((item) => (
+            <div
+              key={item.Repair_ID}
+              className={`space-y-4 p-4 rounded-lg border border-green-500`}
+            >
+              <div className="flex space-x-8">
+                <h1 className="text-lg font-medium">
+                  รหัสรายการซ่อม {item.Repair_ID}
+                </h1>
+                <h1 className="text-lg font-medium">บาร์โค้ด {item.BookQR}</h1>
+                <p className="text-lg font-medium">
+                  รหัสหนังสือ {item.FK_BookID}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex space-x-4">
+                  <p className="text-sm font-bold">
+                    ชื่อหนังสือ {item.Bookname}
+                  </p>
+                  <p className="text-sm font-bold">
+                    สนถานะทรัพยากร {item.BookType}
+                  </p>
+                  <p className="text-sm font-bold">
+                    สถานที่จัดเก็บ {item.Bookaddress}
+                  </p>
                 </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex flex-wrap space-x-4">
-                <p className="text-sm">รายการ {item.Service}</p>
-                {item.ServiceNote && <p className="text-sm">เพิ่มเติม {item.ServiceNote}</p>}
-                <p className="text-sm font-bold">วันที่ทำรายการ {formatDate(item.ServiceDate)}</p>
-                <p className="text-sm font-bold">สถานะ {item.StatusName}</p>
-                <p className="text-sm font-bold">วันที่อัปเดตสถานะ {formatDate(item.StatusDate)}</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap space-x-4">
+                  <p className="text-sm">รายการ {item.Service}</p>
+                  {item.ServiceNote && (
+                    <p className="text-sm">เพิ่มเติม {item.ServiceNote}</p>
+                  )}
+                  <p className="text-sm font-bold">
+                    วันที่ทำรายการ {formatDate(item.ServiceDate)}
+                  </p>
+                  <p className="text-sm font-bold">สถานะ {item.StatusName}</p>
+                  <p className="text-sm font-bold">
+                    วันที่อัปเดตสถานะ {formatDate(item.StatusDate)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end items-center space-x-4">
+                <input
+                  type="checkbox"
+                  className="w-5 h-5"
+                  checked={checkedItems[item.Repair_ID] || false}
+                  onChange={() => handleCheckboxChange(item.Repair_ID)}
+                />{" "}
               </div>
             </div>
-            <div className="flex justify-end items-center space-x-4">
-              <input
-                type="checkbox"
-                className="w-5 h-5"
-                checked={checkedItems[item.Repair_ID] || false}
-                onChange={() => handleCheckboxChange(item.Repair_ID)}
-              />
-              <Button onClick={() => submit(item.Repair_ID, data)}
-              disabled={isuploading}
-                >{isLoading ? "Loading..." : "นำหนังสือขึ้นชั้น"}</Button>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
 };
-
-
 
 export default Page;

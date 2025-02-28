@@ -3,9 +3,14 @@ import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/session";
+const allowedBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export async function POST(req: Request) {
+  const referer = req.headers.get("referer");
+  if (!referer || !referer.startsWith(allowedBaseUrl)) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+  }
   const body: any[] = await req.json();
-  console.log("Received Data:", body);
+  // console.log("Received Data:", body);
 
   const cookie = (await cookies()).get("session")?.value;
   let session = null;
@@ -29,11 +34,15 @@ export async function POST(req: Request) {
  UPDATE Books SET Bookstate='ดูที่ชั้น' WHERE BookQR = ?;
 `;
   try {
-    const promises = body.map(async dataquery => {
+    const promises = body.map(async (dataquery) => {
       const { Repair_ID, BookQR } = dataquery;
-      await connection.query(insertStatusQuery, [Repair_ID, ID_User, 5, new Date()]);
+      await connection.query(insertStatusQuery, [
+        Repair_ID,
+        ID_User,
+        5,
+        new Date(),
+      ]);
       await connection.query(bookupdate, [BookQR]);
-
     });
 
     await Promise.all(promises);

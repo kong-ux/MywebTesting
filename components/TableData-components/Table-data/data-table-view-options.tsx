@@ -8,8 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
@@ -17,8 +16,9 @@ interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
 
+// คอมโพเนนต์ DataTableViewOptions ใช้สำหรับแสดงตัวเลือกการมองเห็นของตาราง
 export function DataTableViewOptions<TData>({
-  table
+  table,
 }: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>

@@ -2,8 +2,15 @@ import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/session';
-
+const allowedBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export async function POST(req: Request) {
+     const referer = req.headers.get('referer');
+      if (!referer || !referer.startsWith(allowedBaseUrl)) {
+        return NextResponse.json(
+          { error: "Unauthorized access" },
+          { status: 403 }
+        );
+      }
   const connection = await getConnection();
   const body: any[] = await req.json(); // Parse incoming JSON data
 
@@ -37,7 +44,7 @@ export async function POST(req: Request) {
       const formattedStatusDate = date.toISOString().slice(0, 19).replace('T', ' ');
 
       await connection.query(insertStatusQuery, [Repair_ID, ID_User, status, formattedStatusDate]);
-      console.log("Status inserted successfully.", connection.query(insertStatusQuery, [Repair_ID, ID_User, status, formattedStatusDate]));
+      // console.log("Status inserted successfully.", connection.query(insertStatusQuery, [Repair_ID, ID_User, status, formattedStatusDate]));
     });
     
     await Promise.all(promises);

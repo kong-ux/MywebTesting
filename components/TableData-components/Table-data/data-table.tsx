@@ -34,15 +34,22 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+// คอมโพเนนต์ DataTable ใช้สำหรับแสดงตารางข้อมูล
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    UserAdminName: false,
-    FK_BookID: false,
-    ServiceNote: false,
-    Repair_ID: false,
-  });
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({
+      UserAdminName: false,
+      FK_BookID: false,
+      ServiceNote: false,
+      Repair_ID: false,
+    });
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "ServiceDate", desc: true },
   ]);
@@ -58,7 +65,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   const handleContextMenu = (event: React.MouseEvent, row: any) => {
     event.preventDefault();
-    
+
     // ดึงค่าตำแหน่งของเมาส์จากหน้าจอ
     const mouseX = event.clientX;
     const mouseY = event.clientY;
@@ -98,8 +105,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   return (
-    <div ref={tableRef} className="space-y-4 m-8 m-auto relative" onClick={closeContextMenu}>
-      <DataTableToolbar  table={table} />
+    <div
+      ref={tableRef}
+      className="space-y-4 m-8 m-auto relative"
+      onClick={closeContextMenu}
+    >
+      <DataTableToolbar table={table} />
       <div className="overflow-y-auto rounded-md border">
         <DataTablePagination table={table} />
         <Table>
@@ -107,10 +118,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead className="px-4 py-2" key={header.id} colSpan={header.colSpan}>
+                  <TableHead
+                    className="px-4 py-2"
+                    key={header.id}
+                    colSpan={header.colSpan}
+                  >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -126,14 +144,20 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell className="px-4 py-2" key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   ไม่พบข้อมูล.
                 </TableCell>
               </TableRow>
@@ -141,7 +165,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           </TableBody>
         </Table>
       </div>
-      
 
       {contextMenu.open && contextMenu.rowData && (
         <DataTableRowActions

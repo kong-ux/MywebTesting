@@ -1,7 +1,7 @@
 "use client";
 
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { Table } from "@tanstack/react-table";
+import { Table } from "@tanstack-react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
@@ -14,12 +14,11 @@ import { DownloadExcel } from "@/lib/xlsx";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  setGlobalFilter: (filterValue: string) => void;
 }
 
+// คอมโพเนนต์ DataTableToolbar ใช้สำหรับแสดงแถบเครื่องมือของตาราง
 export function DataTableToolbar<TData>({
   table,
-  setGlobalFilter,
 }: DataTableToolbarProps<TData>) {
   const [typeBooks, setTypeBooks] = useState([]);
   const [addressBooks, setAddressBooks] = useState([]);
@@ -97,7 +96,7 @@ export function DataTableToolbar<TData>({
           placeholder="ค้นหาหนังสือด้วยชื่อ, QR หรือ ID..."
           value={(table.getState().globalFilter as string) ?? ""}
           onChange={(event) => {
-            setGlobalFilter(event.target.value);
+            table.setGlobalFilter(event.target.value);
           }}
           className="h-8 w-[150px] lg:w-[250px]"
         />

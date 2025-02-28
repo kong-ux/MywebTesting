@@ -7,7 +7,7 @@ import { CalendarDatePicker } from "@/components/global/calendar-date-picker";
 import fetchTypeBooks_AddressBook from "./data"; // Corrected import statement
 import searchdata from "./searchdata"; // Import searchdata function
 import { MultiSelect } from "@/components/ui/multi-select"; // Import MultiSelect component
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar } from "@/components/ui/calendar";
 
 interface ReportFormProps {
   onFilteredData: (data: any[]) => void;
@@ -32,7 +32,9 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
   const [selectedBookType, setSelectedBookType] = useState<string[]>([]);
   const [selectedBookAddress, setSelectedBookAddress] = useState<string[]>([]);
   const [selectedService, setSelectedService] = useState<string[]>([]);
-  const [selectedServiceByName, setSelectedServiceByName] = useState<string[]>([]);
+  const [selectedServiceByName, setSelectedServiceByName] = useState<string[]>(
+    []
+  );
   const [selectedStatusName, setSelectedStatusName] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,8 +45,15 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const { BookType, Bookaddress, Bookstate, ServiceByName, Service, StatusName, User } =
-          await fetchTypeBooks_AddressBook();
+        const {
+          BookType,
+          Bookaddress,
+          Bookstate,
+          ServiceByName,
+          Service,
+          StatusName,
+          User,
+        } = await fetchTypeBooks_AddressBook();
 
         // ✅ เซ็ตค่าใหม่โดยไม่เพิ่มซ้ำ
         setBookType(BookType || []);
@@ -61,17 +70,25 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
     fetchData();
   }, []); // ✅ useEffect เรียกใช้แค่ครั้งเดียว
 
-  const handleDateSelect = ({ from, to }: { from: Date | null; to: Date | null }) => {
+  const handleDateSelect = ({
+    from,
+    to,
+  }: {
+    from: Date | null;
+    to: Date | null;
+  }) => {
     console.log("ค่าที่เลือก:", { from, to });
-    setDateRange({ 
-      from: from ?? new Date(new Date().getFullYear(), 0, 1), 
-      to: to ?? new Date() 
+    setDateRange({
+      from: from ?? new Date(new Date().getFullYear(), 0, 1),
+      to: to ?? new Date(),
     });
     setInputFromDate(from ? from.toLocaleDateString("sv-SE") : "");
     setInputToDate(to ? to.toLocaleDateString("sv-SE") : "");
   };
 
-  const handleInputFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputFromDateChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newFromDate = e.target.value;
     setInputFromDate(newFromDate);
     const fromDate = new Date(newFromDate);
@@ -88,7 +105,7 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const fromDate = dateRange.from.toLocaleDateString("sv-SE"); 
+    const fromDate = dateRange.from.toLocaleDateString("sv-SE");
     const toDate = new Date(dateRange.to);
     toDate.setHours(23, 59, 59, 999); // Ensure the end of the day is included
     const toDateString = toDate.toLocaleDateString("sv-SE");
@@ -104,20 +121,20 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
       fromDate,
       toDateString,
     });
-    
-      const filteredData = await searchdata(
-        inputValue || "", // Ensure inputValue is a string
-        selectedBookState || [], 
-        selectedBookType || [],
-        selectedBookAddress || [],
-        selectedService || [],
-        selectedServiceByName || [],
-        selectedStatusName || [],
-        selectedUser  || [],
-        fromDate,
-        toDateString
-      );
-      
+
+    const filteredData = await searchdata(
+      inputValue || "", // Ensure inputValue is a string
+      selectedBookState || [],
+      selectedBookType || [],
+      selectedBookAddress || [],
+      selectedService || [],
+      selectedServiceByName || [],
+      selectedStatusName || [],
+      selectedUser || [],
+      fromDate,
+      toDateString
+    );
+
     console.log("Filtered Data:", filteredData);
     onFilteredData(filteredData);
     setLoading(false);
@@ -133,7 +150,7 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
           />
-          
+
           {/* ✅ Bookstate */}
           <MultiSelect
             options={Bookstate.map((type) => ({ label: type, value: type }))}
@@ -150,64 +167,75 @@ export function ReportForm({ onFilteredData }: ReportFormProps) {
 
           {/* ✅ Bookaddress */}
           <MultiSelect
-            options={Bookaddress.map((address) => ({ label: address, value: address }))}
+            options={Bookaddress.map((address) => ({
+              label: address,
+              value: address,
+            }))}
             placeholder="สถานที่จัดเก็บ"
             onChange={setSelectedBookAddress}
           />
 
           {/* ✅ Service */}
           <MultiSelect
-            options={Service.map((service) => ({ label: service, value: service }))}
+            options={Service.map((service) => ({
+              label: service,
+              value: service,
+            }))}
             placeholder="รายการ"
             onChange={setSelectedService}
           />
 
           {/* ✅ ServiceByName */}
           <MultiSelect
-            options={ServiceByName.map((name) => ({ label: name, value: name }))}
+            options={ServiceByName.map((name) => ({
+              label: name,
+              value: name,
+            }))}
             placeholder="ชื่อผู้แจ้ง"
             onChange={setSelectedServiceByName}
           />
 
           {/* ✅ StatusName */}
           <MultiSelect
-            options={StatusName.map((status) => ({ label: status, value: status }))}
+            options={StatusName.map((status) => ({
+              label: status,
+              value: status,
+            }))}
             placeholder="สถานะทรัพยากร"
             onChange={setSelectedStatusName}
           />
           {/* ✅ User */}
           <MultiSelect
-          options={User.map((user) => ({ label: user, value: user }))}
-          placeholder="เจ้าหน้าที่"
-          onChange={setSelectedUser}
-        />
+            options={User.map((user) => ({ label: user, value: user }))}
+            placeholder="เจ้าหน้าที่"
+            onChange={setSelectedUser}
+          />
         </div>
 
         <div className="space-y-4 space-x-2 w-1/4">
           <div className="flex items-center space-x-2">
-
-          {/* ✅ CalendarDatePicker */}
-          <CalendarDatePicker
-            date={dateRange}
-            onDateSelect={handleDateSelect}
-            className="w-full"
-            variant="outline"
-            />
             <Input
-            type="date"
-            value={inputFromDate}
-            onChange={handleInputFromDateChange}
-            placeholder="จากวันที่"
-          />
-          <div className="text-center px-2 w-full">ถึง</div>
-          <Input
-          
-            type="date"
-            value={inputToDate}
-            onChange={handleInputToDateChange}
-            placeholder="ถึงวันที่"
-          />
-            </div>
+              type="date"
+              value={inputFromDate}
+              onChange={handleInputFromDateChange}
+              placeholder="จากวันที่"
+            />
+            <div className="text-center px-2 w-full">ถึง</div>
+            <Input
+              type="date"
+              value={inputToDate}
+              onChange={handleInputToDateChange}
+              placeholder="ถึงวันที่"
+            />
+
+            {/* ✅ CalendarDatePicker */}
+            <CalendarDatePicker
+              date={dateRange}
+              onDateSelect={handleDateSelect}
+              className="w-full"
+              variant="outline"
+            />
+          </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "กำลังค้นหา..." : "ค้นหา"}
           </Button>

@@ -4,20 +4,6 @@ import { z } from "zod";
 // IRL, you will have a schema for your data models.
 export const expenseSchema = z.object({
     
-    index: z.string(),
-    Repair_ID: z.string(),
-    UserAdminName: z.string(),
-    BookQR: z.string(),
-    FK_BookID: z.string(),
-    Bookname: z.string(),
-    BookType: z.string(),
-    Bookaddress: z.string(),
-    Bookstate: z.string(),
-    ServiceNote: z.string(),
-    ServiceByName: z.string(),
-    ServiceDate: z.string(),
-    StatusName: z.string(),
-    StatusDate: z.string(),
 
 });
 
